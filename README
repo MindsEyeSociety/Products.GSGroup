@@ -1,0 +1,8 @@
+GroupServer Group Product
+
+Groups are strange, as they are split into three parts.
+  1. The user-group is handled by the CustomUserFolder.
+  2. The mailing list, and the Web representation of posts and topics, is
+     handled by XWFMailingListManager.
+  3. The Web-interface to the group is handled by this product.
+
