@@ -107,7 +107,7 @@ class IGSSiteAdministrationInfo(Interface):
       description=u'All the administrators for the site.',
       readonly=True)
 
-    def is_site_administrator(user):
+    def site_administrator(user):
         """Whether the user a site administrator.
         
         ARGUMENTS
@@ -120,18 +120,47 @@ class IGSSiteAdministrationInfo(Interface):
           None
         """
 
-class IGSGroupAdmistrationInfo(Interface):
-    """Group administration information"""
+class IGSParticipationCoachInfo(Interface):
+    """Participation Coach Information"""
     
     participationCoach = Field(title=u'Participation Coach',
       description=u'The participation coach for the group',
-      readonly=True)
-      
+      readonly=True)    
+
+    def coach(user):
+        """Is the user a participation coach?
+        
+        ARGUMENTS
+          "user": A user.
+        
+        RETURNS
+          "True" if the user is a participation coach; "False" otherwise.
+        
+        SIDE EFFECTS
+          None
+        """
+    
+    def status(user):
+        """Paricipation coach status of the user
+        
+        ARGUMENTS
+          "user": A user.
+        
+        RETURNS
+          A string describing the participation-coach status of the user.
+          
+        SIDE EFFECTS
+          None.
+        """
+
+class IGSGroupAdmistrationInfo(Interface):
+    """Group administration information"""
+    
     groupAdministrators = Tuple(title=u'Group Administrators',
       description=u'All users that have the group administrator role',
       readonly=True)
       
-    def can_administer(user):
+    def administrator(user):
         """Can the user administer the group?
         
         ARGUMENTS
@@ -145,19 +174,6 @@ class IGSGroupAdmistrationInfo(Interface):
           None
         """
 
-    def participation_coach(user):
-        """Is the user a participation coach?
-        
-        ARGUMENTS
-          "user": A user.
-        
-        RETURNS
-          "True" if the user is a participation coach; "False" otherwise.
-        
-        SIDE EFFECTS
-          None
-        """
-        
     def group_administrator(user):
         """Is the user a group administrator?
         
@@ -329,7 +345,7 @@ class IGSGroupViewingInfo(IGSViewingInfo):
 class IGSMembersViewingInfo(IGSViewingInfo):
     """Group-Membership Viewing Information"""
 
-class IGSPostViewingInfo(IGSViewingInfo):
+class IGSMessageViewingInfo(IGSViewingInfo):
     """Information about who can view the posts that are added to the 
     group."""
 
@@ -381,4 +397,9 @@ class IGSMessagePostingInfo(IGSPostingInfo):
 
 class IGSChatPostingInfo(IGSPostingInfo):
     """Information about posting chat messages to the group"""
+
+# Specific Group Types.
+
+class INoGroup(Interface):
+    """Marker interface for the No Group"""
 
