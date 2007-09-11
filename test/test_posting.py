@@ -30,14 +30,46 @@ def test_posting():
       >>> import md5
       >>> import Products.Five
       >>> from Products.CustomUserFolder.CustomUser import CustomUser
+      >>> from Products.CustomUserFolder.CustomUserFolder import CustomUserFolder
       >>> from Products.Five import zcml
+      >>> from zope.component import provideAdapter
       
     Create the first test user
       >>> name = password = 'User A'
       >>> roles = ('GroupMember', 'Hippy')
       >>> domains = None
       >>> userA = CustomUser(name, password, roles, domains)
+      >>> 'Authenticated' in userA.getRoles()
+      True
 
+    Create the first test administrator
+      >>> name = password = 'Group Administrator A'
+      >>> roles = ('GroupMember', 'GroupAdmin', 'Hippy')
+      >>> domains = None
+      >>> groupAdminA = CustomUser(name, password, roles, domains)
+      >>> 'Authenticated' in groupAdminA.getRoles()
+      True
+  
+    Create a group
+      >>> groupA = CustomUserFolder('group_a_member')
+      >>> from zope.interface import alsoProvides
+      >>> from Products.XWFChat.interfaces import IGSGroupFolder
+      >>> alsoProvides(groupA, IGSGroupFolder)
+      >>> IGSGroupFolder.providedBy(groupA)
+      True
+
+    Adapt the group
+      >>> from Products.GSGroup.noGroup import NoPostingInfo
+      >>> provideAdapter(NoPostingInfo)
+      >>> from Products.GSGroup.interfaces import IGSPostingInfo
+      >>> postingInfo = IGSPostingInfo(groupA)
+      >>> postingInfo.whoCanPost
+      'No one can post.'
+      >>> postingInfo.can_post(userA)
+      False
+      >>> postingInfo.status(userA)
+      'no one can post to the group'
+      
     Clean up:
       >>> tearDown()
       
