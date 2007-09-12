@@ -81,7 +81,6 @@ def test_posting():
       u'no one can join the group'
     
     Leaving
-      >>> provideAdapter(NoLeavingInfo)
       >>> leavingInfo = IGSLeavingInfo(groupA)
       >>> leavingInfo.leavability
       u'no one can ever leave the group.'
@@ -90,96 +89,7 @@ def test_posting():
       >>> leavingInfo.status(userA)
       u'you can \u266fnever leave\u266f'
 
-    Message posting
-      >>> provideAdapter(NoMessagePostingInfo)
-      >>> messagePostingInfo = IGSMessagePostingInfo(groupA)
-      >>> messagePostingInfo.whoCanPost
-      u'No one can post messages.'
-      >>> messagePostingInfo.can_post(userA)
-      False
-      >>> messagePostingInfo.status(userA)
-      u'no one can post messages to the group'
-      
-    Chat message posting
-      >>> provideAdapter(NoChatPostingInfo)
-      >>> chatPostingInfo = IGSChatPostingInfo(groupA)
-      >>> chatPostingInfo.whoCanPost
-      u'No one can post chat messages.'
-      >>> chatPostingInfo.can_post(userA)
-      False
-      >>> chatPostingInfo.status(userA)
-      u'no one can post chat messages to the group'
-      
-    Group viewing
-      >>> provideAdapter(NoGroupViewingInfo)
-      >>> groupViewingInfo = IGSGroupViewingInfo(groupA)
-      >>> groupViewingInfo.whoCanView
-      u'No one can view the group.'
-      >>> groupViewingInfo.can_view(userA)
-      False
-      >>> groupViewingInfo.status(userA)
-      u'no one can view the group.'
-      
-    Members viewing
-      >>> provideAdapter(NoMembersViewingInfo)
-      >>> membersViewingInfo = IGSMembersViewingInfo(groupA)
-      >>> membersViewingInfo.whoCanView
-      u'No one can view the members list.'
-      >>> membersViewingInfo.can_view(userA)
-      False
-      >>> membersViewingInfo.status(userA)
-      u'no one can view the members list.'
-
-    Message viewing
-      >>> provideAdapter(NoMessageViewingInfo)
-      >>> messageViewingInfo = IGSMessageViewingInfo(groupA)
-      >>> messageViewingInfo.whoCanView
-      u'No one can view the messages.'
-      >>> messageViewingInfo.can_view(userA)
-      False
-      >>> messageViewingInfo.status(userA)
-      u'no one can view the messages.'
-      
-    Chat viewing
-      >>> provideAdapter(NoChatViewingInfo)
-      >>> chatViewingInfo = IGSChatViewingInfo(groupA)
-      >>> chatViewingInfo.whoCanView
-      u'No one can view chat.'
-      >>> chatViewingInfo.can_view(userA)
-      False
-      >>> chatViewingInfo.status(userA)
-      u'no one can view chat.'
-      
-    Moderation
-      >>> provideAdapter(NoModerationInfo)
-      >>> moderationInfo = IGSModerationInfo(groupA)
-      >>> moderationInfo.moderationOn
-      False
-      >>> moderationInfo.moderationStatus
-      u'There is no moderation.'
-
-    Moderated Members
-      >>> provideAdapter(NoModeratedInfo)
-      >>> moderatedInfo = IGSModeratedInfo(groupA)
-      >>> moderatedInfo.moderatedMembers
-      ()
-      >>> moderatedInfo.moderated(userA)
-      False
-      >>> moderatedInfo.status(userA)
-      u'not moderated'
-
-    Moderators
-      >>> provideAdapter(NoModeratorInfo)
-      >>> moderatorInfo = IGSModeratorInfo(groupA)
-      >>> moderatorInfo.moderators
-      ()
-      >>> moderatorInfo.moderator(userA)
-      False
-      >>> moderatorInfo.status(userA)
-      u'not a moderator'
-
     Site Administration
-      >>> provideAdapter(NoSiteAdministrationInfo)
       >>> administratorInfo = IGSSiteAdministrationInfo(groupA)
       >>> administratorInfo.siteAdministrators
       ()
@@ -187,7 +97,6 @@ def test_posting():
       False
       
     Group Administration
-      >>> provideAdapter(NoGroupAdministrationInfo)
       >>> groupAdministratorInfo = IGSGroupAdmistrationInfo(groupA)
       >>> groupAdministratorInfo.groupAdministrators
       ()
@@ -199,13 +108,91 @@ def test_posting():
       u'no one is an administrator'
 
     Participation Coach
-      >>> provideAdapter(NoParticipationCoach)
       >>> participationCoachInfo = IGSParticipationCoachInfo(groupA)
       >>> participationCoachInfo.participationCoach
       >>> participationCoachInfo.coach(userA)
       False
       >>> participationCoachInfo.status(userA)
        u'no one is the participation coach'
+
+    Message posting
+      >>> messagePostingInfo = IGSMessagePostingInfo(groupA)
+      >>> messagePostingInfo.whoCanPost
+      u'No one can post messages.'
+      >>> messagePostingInfo.can_post(userA)
+      False
+      >>> messagePostingInfo.status(userA)
+      u'no one can post messages to the group'
+      
+    Chat message posting
+      >>> chatPostingInfo = IGSChatPostingInfo(groupA)
+      >>> chatPostingInfo.whoCanPost
+      u'No one can post chat messages.'
+      >>> chatPostingInfo.can_post(userA)
+      False
+      >>> chatPostingInfo.status(userA)
+      u'no one can post chat messages to the group'
+      
+    Group viewing
+      >>> groupViewingInfo = IGSGroupViewingInfo(groupA)
+      >>> groupViewingInfo.whoCanView
+      u'No one can view the group.'
+      >>> groupViewingInfo.can_view(userA)
+      False
+      >>> groupViewingInfo.status(userA)
+      u'no one can view the group.'
+      
+    Members viewing
+      >>> membersViewingInfo = IGSMembersViewingInfo(groupA)
+      >>> membersViewingInfo.whoCanView
+      u'No one can view the members list.'
+      >>> membersViewingInfo.can_view(userA)
+      False
+      >>> membersViewingInfo.status(userA)
+      u'no one can view the members list.'
+
+    Message viewing
+      >>> messageViewingInfo = IGSMessageViewingInfo(groupA)
+      >>> messageViewingInfo.whoCanView
+      u'No one can view the messages.'
+      >>> messageViewingInfo.can_view(userA)
+      False
+      >>> messageViewingInfo.status(userA)
+      u'no one can view the messages.'
+      
+    Chat viewing
+      >>> chatViewingInfo = IGSChatViewingInfo(groupA)
+      >>> chatViewingInfo.whoCanView
+      u'No one can view chat.'
+      >>> chatViewingInfo.can_view(userA)
+      False
+      >>> chatViewingInfo.status(userA)
+      u'no one can view chat.'
+      
+    Moderation
+      >>> moderationInfo = IGSModerationInfo(groupA)
+      >>> moderationInfo.moderationOn
+      False
+      >>> moderationInfo.moderationStatus
+      u'There is no moderation.'
+
+    Moderated Members
+      >>> moderatedInfo = IGSModeratedInfo(groupA)
+      >>> moderatedInfo.moderatedMembers
+      ()
+      >>> moderatedInfo.moderated(userA)
+      False
+      >>> moderatedInfo.status(userA)
+      u'not moderated'
+
+    Moderators
+      >>> moderatorInfo = IGSModeratorInfo(groupA)
+      >>> moderatorInfo.moderators
+      ()
+      >>> moderatorInfo.moderator(userA)
+      False
+      >>> moderatorInfo.status(userA)
+      u'not a moderator'
 
     Clean up:
       >>> tearDown()

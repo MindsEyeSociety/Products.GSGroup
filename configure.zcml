@@ -53,13 +53,7 @@
   <interface 
     interface=".interfaces.IGSChatPostingInfo" />
 
-  <class class=".noGroup.NoJoiningInfo">
-    <implements interface=".interfaces.IGSJoiningInfo"/>
-  </class>
-  
-  <adapter factory=".noGroup.NoJoiningInfo"
-    for=".noGroup.INoGroup"
-    provides=".interfaces.IGSJoiningInfo"/>
+  <include files="*-group.zcml" />
 
 </configure>
 

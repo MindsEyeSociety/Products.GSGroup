@@ -39,8 +39,6 @@ class NoJoiningInfo(object):
         return retval
         
 class NoLeavingInfo(object):
-    implements(IGSLeavingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -63,8 +61,6 @@ class NoLeavingInfo(object):
         return retval
 
 class NoSiteAdministrationInfo(object):
-    implements(IGSSiteAdministrationInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -81,9 +77,7 @@ class NoSiteAdministrationInfo(object):
         return retval
 
 class NoGroupAdministrationInfo(object):
-    implements(IGSGroupAdmistrationInfo)
-    adapts(INoGroup)
-    
+
     def __init__(self, context):
         self.context = context
         
@@ -110,8 +104,6 @@ class NoGroupAdministrationInfo(object):
         return retval
 
 class NoParticipationCoach(object):
-    implements(IGSParticipationCoachInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -133,8 +125,6 @@ class NoParticipationCoach(object):
         return retval
 
 class NoMessagePostingInfo(object):
-    implements(IGSMessagePostingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -158,8 +148,6 @@ class NoMessagePostingInfo(object):
         return retval
 
 class NoChatPostingInfo(object):
-    implements(IGSChatPostingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -183,8 +171,6 @@ class NoChatPostingInfo(object):
         return retval
 
 class NoGroupViewingInfo(object):
-    implements(IGSGroupViewingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -208,8 +194,6 @@ class NoGroupViewingInfo(object):
         return retval
 
 class NoMembersViewingInfo(object):
-    implements(IGSMembersViewingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -233,8 +217,6 @@ class NoMembersViewingInfo(object):
         return retval
         
 class NoMessageViewingInfo(object):
-    implements(IGSMessageViewingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -258,8 +240,6 @@ class NoMessageViewingInfo(object):
         return retval
 
 class NoChatViewingInfo(object):
-    implements(IGSChatViewingInfo)
-    adapts(INoGroup)
     
     def __init__(self, context):
         self.context = context
@@ -283,8 +263,6 @@ class NoChatViewingInfo(object):
         return retval
 
 class NoModerationInfo(object):
-    implements(IGSModerationInfo)
-    adapts(INoGroup)
         
     def __init__(self, context):
         self.context = context
@@ -303,9 +281,7 @@ class NoModerationInfo(object):
         return retval
         
 class NoModeratedInfo(object):
-    implements(IGSModeratedInfo)
-    adapts(INoGroup)
-    
+
     def __init__(self, context):
         self.context = context
         
@@ -327,8 +303,6 @@ class NoModeratedInfo(object):
         return retval
         
 class NoModeratorInfo(object):
-    implements(IGSModeratorInfo)
-    adapts(INoGroup)
 
     def __init__(self, context):
         self.context = context

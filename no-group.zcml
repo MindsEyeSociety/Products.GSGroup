@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:rdb="http://namespaces.zope.org/rdb"
+  xmlns:sqlos="http://namespaces.sqlobject.org/sqlos"
+  xmlns:five="http://namespaces.zope.org/five">
+
+  <!-- Joining and leaving -->
+  <class class=".noGroup.NoJoiningInfo">
+    <implements interface=".interfaces.IGSJoiningInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoJoiningInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSJoiningInfo"/>
+
+  <class class=".noGroup.NoLeavingInfo">
+    <implements interface=".interfaces.IGSLeavingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoLeavingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSLeavingInfo"/>
+      
+  <!-- Administration -->
+  <class class=".noGroup.NoSiteAdministrationInfo">
+    <implements interface=".interfaces.IGSSiteAdministrationInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoSiteAdministrationInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSSiteAdministrationInfo"/>
+
+  <class class=".noGroup.NoGroupAdministrationInfo">
+    <implements interface=".interfaces.IGSGroupAdmistrationInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoGroupAdministrationInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSGroupAdmistrationInfo"/>
+
+  <class class=".noGroup.NoParticipationCoach">
+    <implements interface=".interfaces.IGSParticipationCoachInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoParticipationCoach"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSParticipationCoachInfo"/>
+
+
+  <!-- Posting -->
+  <class class=".noGroup.NoMessagePostingInfo">
+    <implements interface=".interfaces.IGSMessagePostingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoMessagePostingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSMessagePostingInfo"/>
+
+  <class class=".noGroup.NoChatPostingInfo">
+    <implements interface=".interfaces.IGSChatPostingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoChatPostingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSChatPostingInfo"/>
+
+  <!-- Viewing -->
+  <class class=".noGroup.NoGroupViewingInfo">
+    <implements interface=".interfaces.IGSGroupViewingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoGroupViewingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSGroupViewingInfo"/>
+
+  <class class=".noGroup.NoMembersViewingInfo">
+    <implements interface=".interfaces.IGSMembersViewingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoMembersViewingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSMembersViewingInfo"/>
+
+  <class class=".noGroup.NoMessageViewingInfo">
+    <implements interface=".interfaces.IGSMessageViewingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoMessageViewingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSMessageViewingInfo"/>
+
+  <class class=".noGroup.NoChatViewingInfo">
+    <implements interface=".interfaces.IGSChatViewingInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoChatViewingInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSChatViewingInfo"/>
+    
+  <!-- Moderation -->
+  <class class=".noGroup.NoModerationInfo">
+    <implements interface=".interfaces.IGSModerationInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoModerationInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSModerationInfo"/>
+    
+  <class class=".noGroup.NoModeratedInfo">
+    <implements interface=".interfaces.IGSModeratedInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoModeratedInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSModeratedInfo"/>
+    
+  <class class=".noGroup.NoModeratorInfo">
+    <implements interface=".interfaces.IGSModeratorInfo"/>
+  </class>
+  <adapter factory=".noGroup.NoModeratorInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSModeratorInfo"/>  
+</configure>
+
