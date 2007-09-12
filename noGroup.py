@@ -3,18 +3,20 @@
   anything in a No group. Mostly used for testing, or locking something
   down hard.
 """
-from zope.interface import implements
+from zope.interface import Interface, implements
 from zope.component import adapts
 
 from Products.CustomUserFolder.CustomUserFolder import CustomUserFolder
 
 from interfaces import *
-from interfaces import INoGroup
+
+# Specific Group Types.
+
+class INoGroup(Interface):
+    """Marker interface for the No Group"""
 
 class NoJoiningInfo(object):
-    implements(IGSJoiningInfo)
-    adapts(INoGroup)
-    
+
     def __init__(self, context):
         self.context = context
 

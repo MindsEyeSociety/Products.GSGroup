@@ -42,7 +42,7 @@
     interface=".interfaces.IGSMembersViewingInfo" />
 
   <interface 
-    interface=".interfaces.IGSPostViewingInfo" />
+    interface=".interfaces.IGSMessageViewingInfo" />
 
   <interface 
     interface=".interfaces.IGSChatViewingInfo" />
@@ -52,6 +52,14 @@
 
   <interface 
     interface=".interfaces.IGSChatPostingInfo" />
+
+  <class class=".noGroup.NoJoiningInfo">
+    <implements interface=".interfaces.IGSJoiningInfo"/>
+  </class>
+  
+  <adapter factory=".noGroup.NoJoiningInfo"
+    for=".noGroup.INoGroup"
+    provides=".interfaces.IGSJoiningInfo"/>
 
 </configure>
 

@@ -31,9 +31,14 @@ def test_posting():
       >>> import Products.Five
       >>> from Products.CustomUserFolder.CustomUser import CustomUser
       >>> from Products.CustomUserFolder.CustomUserFolder import CustomUserFolder
-      >>> from Products.Five import zcml
       >>> from zope.component import provideAdapter
-      
+
+      >>> import Products.GSGroup      
+      >>> from Products.Five import zcml
+      >>> zcml.load_config('meta.zcml', Products.Five)
+      >>> zcml.load_config('permissions.zcml', Products.Five)
+      >>> zcml.load_config('configure.zcml', Products.GSGroup)
+
     Create the first test user
       >>> name = password = 'User A'
       >>> roles = ('GroupMember', 'Hippy')
@@ -53,7 +58,7 @@ def test_posting():
     Create a group
       >>> groupA = CustomUserFolder('group_a_member')
       >>> from zope.interface import alsoProvides
-      >>> from Products.GSGroup.interfaces import INoGroup
+      >>> from Products.GSGroup.noGroup import INoGroup
       
     Add the No-Group maker interface
       >>> alsoProvides(groupA, INoGroup)
@@ -67,7 +72,6 @@ def test_posting():
       >>> from Products.GSGroup.interfaces import *
       
     Joining
-      >>> provideAdapter(NoJoiningInfo)
       >>> joiningInfo = IGSJoiningInfo(groupA)
       >>> joiningInfo.joinability
       u'no one can join the group.'

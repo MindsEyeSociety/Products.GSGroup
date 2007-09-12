@@ -398,8 +398,3 @@ class IGSMessagePostingInfo(IGSPostingInfo):
 class IGSChatPostingInfo(IGSPostingInfo):
     """Information about posting chat messages to the group"""
 
-# Specific Group Types.
-
-class INoGroup(Interface):
-    """Marker interface for the No Group"""
-
