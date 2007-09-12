@@ -56,11 +56,12 @@ def test_posting():
       True
   
     Create a group
-      >>> groupA = CustomUserFolder('group_a_member')
+      >>> from zope.app.folder import Folder
       >>> from zope.interface import alsoProvides
-      >>> from Products.GSGroup.noGroup import INoGroup
+      >>> groupA = Folder()
       
     Add the No-Group maker interface
+      >>> from Products.GSGroup.noGroup import INoGroup
       >>> alsoProvides(groupA, INoGroup)
       >>> INoGroup.providedBy(groupA)
       True
