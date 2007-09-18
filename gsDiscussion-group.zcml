@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configure xmlns="http://namespaces.zope.org/zope"
+  xmlns:browser="http://namespaces.zope.org/browser"
+  xmlns:rdb="http://namespaces.zope.org/rdb"
+  xmlns:sqlos="http://namespaces.sqlobject.org/sqlos"
+  xmlns:five="http://namespaces.zope.org/five">
+
+  <!-- Joining and leaving -->
+  <class class=".gsDiscussion.GSJoiningInfo">
+    <implements interface=".interfaces.IGSJoiningInfo"/>
+  </class>
+  <adapter factory=".gsDiscussion.GSJoiningInfo"
+    for=".gsDiscussion.IGSDiscussionGroup"
+    provides=".interfaces.IGSJoiningInfo"/>
+
+  <class class=".gsDiscussion.GSLeavingInfo">
+    <implements interface=".interfaces.IGSLeavingInfo"/>
+  </class>
+  <adapter factory=".gsDiscussion.GSLeavingInfo"
+    for=".gsDiscussion.IGSGroup"
+    provides=".interfaces.IGSLeavingInfo"/>
+
+  <!-- Posting -->
+  <class class=".gsDiscussion.GSMessagePostingInfo">
+    <implements interface=".interfaces.IGSMessagePostingInfo"/>
+  </class>
+  <adapter factory=".gsDiscussion.GSMessagePostingInfo"
+    for=".gsDiscussion.IGSDiscussionGroup"
+    provides=".interfaces.IGSMessagePostingInfo"/>
+
+  <class class=".gsDiscussion.GSChatPostingInfo">
+    <implements interface=".interfaces.IGSChatPostingInfo"/>
+  </class>
+  <adapter factory=".gsDiscussion.GSChatPostingInfo"
+    for=".gsDiscussion.IGSDiscussionGroup"
+    provides=".interfaces.IGSChatPostingInfo"/>
+</configure>
+

@@ -5,7 +5,10 @@ group activity. The are of the same rough form, with two main methods
   * Ability: Does the user have the ability to carry out a particular 
     activity?
   * Status: Describe the user's ability to carry out a particular
-    activity.
+    activity. It is assumed that a verb precedes the return value, and
+    no return value ends in a full stop (alias period). For example
+      "not a member", "an administrator", "insufficient cake"
+    No Verbs Allowed!
 The exceptions to this basic idiom are the administration interfaces, and 
 the "IGSModerationInfo", interface. The latter does not have any methods,
 and supplies information about the entire group; the former also proides
