@@ -17,14 +17,14 @@
     <implements interface=".interfaces.IGSLeavingInfo"/>
   </class>
   <adapter factory=".gsDiscussion.GSLeavingInfo"
-    for=".gsDiscussion.IGSGroup"
+    for=".gsDiscussion.IGSDiscussionGroup"
     provides=".interfaces.IGSLeavingInfo"/>
 
   <!-- Posting -->
-  <class class=".gsDiscussion.GSMessagePostingInfo">
+  <class class=".gsDiscussion.GSDiscussionMessagePostingInfo">
     <implements interface=".interfaces.IGSMessagePostingInfo"/>
   </class>
-  <adapter factory=".gsDiscussion.GSMessagePostingInfo"
+  <adapter factory=".gsDiscussion.GSDiscussionMessagePostingInfo"
     for=".gsDiscussion.IGSDiscussionGroup"
     provides=".interfaces.IGSMessagePostingInfo"/>
 

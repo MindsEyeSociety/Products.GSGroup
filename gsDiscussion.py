@@ -15,6 +15,81 @@ from interfaces import *
 
 class IGSDiscussionGroup(Interface):
     """Marker interface for the GS Discussion Group"""
+        
+class GSJoiningInfo(object):
+
+    def __init__(self, context):
+        self.context = context
+
+    @property
+    def joinability(self): 
+        mailingList = mailing_list_from_group(group)
+        subscribe = mailingList.getProperty('subscribe','')
+        joinCondition = group.getProperty('join_condition','')
+        isOpen = (subscribe == 'subscribe')
+        isRequest = (joinCondition == 'apply')
+        isInvitation = (joinCondition != 'apply')
+
+        if isOpen:
+            retval = u'anyone'
+        elif isRequest:
+            retval = u'request'
+        elif isInvitation:
+            retval = u'invite'
+        
+        assert retval
+        assert type(retval) == unicode
+        return retval
+        
+    def can_join(self, user):
+        isMember = is_member(user, self.context)
+        retval = not(isMember) and (self.joinability == 'anyone')
+
+        assert type(retval) == bool
+        return retval
+        
+    def status(self, user):
+        isMember = is_member(user, self.context)
+        isInvite = (self.joinability == 'invite')
+        isRequest = (self.joinability == 'request')
+        
+        if isMember:
+            retval = u'already a group member'
+        elif isInvite:
+            retval = u'be invited'
+        elif isRequest:
+            retval = u'request permission'
+        else:
+            retval = u'allowed'
+        
+        assert retval
+        assert type(retval) == unicode
+        return retval
+        
+class GSLeavingInfo(object):
+    
+    def __init__(self, context):
+        self.context = context
+
+    @property
+    def leavability(self):
+        retval = u'anyone'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+        
+    def can_leave(self, user):
+        retval = is_member(user, self.context)
+        assert type(retval) == bool
+        return retval
+        
+    def status(self, user):
+        if is_member(user, self.context):
+            retval = u'a member'
+        else:
+            retval = u'not a member'
+        assert type(retval) == unicode
+        return retval
     
 class GSDiscussionMessagePostingInfo(object):
     
@@ -167,75 +242,4 @@ class GSChatViewingInfo(object):
         assert retval
         assert type(retval) == unicode
         return retval
-        
-class GSJoiningInfo(object):
 
-    def __init__(self, context):
-        self.context = context
-
-    @property
-    def joinability(self): 
-        mailingList = mailing_list_from_group(group)
-        subscribe = mailingList.getProperty('subscribe','')
-        joinCondition = group.getProperty('join_condition','')
-        isOpen = (subscribe == 'subscribe')
-        isRequest = (joinCondition == 'apply')
-        isInvitation = (joinCondition != 'apply')
-
-        if isOpen:
-            retval = u'anyone'
-        elif isRequest:
-            retval = u'request'
-        elif isInvitation:
-            retval = u'invite'
-        
-        assert retval
-        assert type(retval) == unicode
-        return retval
-        
-    def can_join(self, user):
-        isMember = is_member(user, self.context)
-        retval = not(isMember) and (self.joinability == 'anyone')
-
-        assert type(retval) == bool
-        return retval
-        
-    def status(self, user):
-        isMember = is_member(user, self.context)
-        isInvite = (self.joinability == 'invite')
-        isRequest = (self.joinability == 'request')
-        
-        if isMember:
-            retval = u'already a group member'
-        elif isInvite:
-            retval = u'be invited'
-        elif isRequest:
-            retval = u'request permission'
-        else:
-            retval = u'allowed'
-        
-        assert retval
-        assert type(retval) == unicode
-        return retval
-        
-class GSLeavingInfo(object):
-    
-    def __init__(self, context):
-        self.context = context
-
-    @property
-    def leavability(self):
-        retval = u'anyone'
-        assert retval
-        assert type(retval) == unicode
-        return retval
-        
-    def can_leave(self, user):
-        retval = True
-        assert type(retval) == bool
-        return retval
-        
-    def status(self, user):
-        retval = u'leave'
-        assert type(retval) == unicode
-        return retval

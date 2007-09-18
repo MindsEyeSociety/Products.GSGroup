@@ -32,10 +32,10 @@ class IGSJoiningInfo(Interface):
       readonly=True)
     
     def can_join(user):
-      """Can the user can leave the group?
+      """Can the user can join the group?
         
         ARGUMENTS
-          "user"" A user.
+          "user" A user.
         
         RETURNS
           "True" if the user is not a group member and can join the group;
@@ -48,7 +48,7 @@ class IGSJoiningInfo(Interface):
         """Can the user can leave the group?
         
         ARGUMENTS
-          "user"" A user.
+          "user" A user.
         
         RETURNS
           A string stating whether the user is in the group, if the user
@@ -72,7 +72,7 @@ class IGSLeavingInfo(Interface):
         """Can the user can leave the group?
         
         ARGUMENTS
-          "user"" A user.
+          "user" A user.
         
         RETURNS
           "True" if the user is a group member and can leave the group;
