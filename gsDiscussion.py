@@ -4,6 +4,7 @@ are based on the adaptor specified here.
 """
 import time, pytz
 from datetime import datetime
+import AccessControl
 from zope.interface import Interface, implements
 from zope.component import adapts
 
@@ -242,4 +243,38 @@ class GSChatViewingInfo(object):
         assert retval
         assert type(retval) == unicode
         return retval
+
+class GSMembersViewingInfo(object):
+    
+    def __init__(self, context):
+        self.context = context
+
+    @property
+    def whoCanView(self):
+        retval = u'No one can view the members list.'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+        
+    def can_view(self, user):
+        retval = False
+        assert type(retval) == bool
+        return retval
+        
+    def status(self, user):
+        retval = u'no one can view the members list.'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+
+def messages_visible(group):
+    securityManager = AccessControl.getSecurityManager()
+
+    groupVisible = securityManager.checkPermission('View', group)
+    messagesVisible = securityManager.checkPermission('View',
+      group.aq_explicit.messages)
+      
+    retval = groupVisible and messagesVisible
+    assert type(retval) == bool
+    return retval
 
