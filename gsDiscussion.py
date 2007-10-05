@@ -7,6 +7,7 @@ from datetime import datetime
 import AccessControl
 from zope.interface import Interface, implements
 from zope.component import adapts, createObject
+from AccessControl.PermissionRole import rolesForPermissionOn
 
 from Products.CustomUserFolder.CustomUserFolder import CustomUserFolder
 
@@ -171,7 +172,7 @@ class GSGroupAdministrationInfo(object):
         assert retval
         return retval
 
-class GSParticipationCoachInfo(object):
+class GSParticipationCoachInfo (object):
     
     def __init__(self, context):
         self.context = context
@@ -299,8 +300,122 @@ class GSChatViewingInfo(object):
         assert type(retval) == unicode
         return retval
 
-class GSModerationInfo(object):
+class GSGroupViewingInfo(object):
+    
+    def __init__(self, context):
+        self.context = context
         
+    @property
+    def whoCanView(self):
+        roles = rolesForPermissionOn('View', self.context)
+        if 'Anonymous' in roles:
+            retval = u'anyone'
+        elif 'DivisionMember' in roles:
+            retval = u'site members'
+        elif 'GroupMember' in roles:
+            retval = u'group members only'
+        elif 'Manager' in roles:
+            retval = u'no-one'
+        else:
+            retval = u'God only'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+
+    def can_view(self, user):
+        securityManager = AccessControl.getSecurityManager()
+        retval = bool(user.hasPermission('View', self.context))
+        assert type(retval) == bool
+        return retval
+
+    def status(self, user):
+        isGroupMember = is_member(user, self.context)
+        isSiteMember = is_site_member(user, self.context)
+        if isGroupMember:
+            retval = u'a group member'
+        elif not(isGroupMember) and isSiteMember:
+            retval = u'a site member but not a group member'
+        elif 'Manager' in user.getRolesInContext(self.context):
+            retval = u'a manager'
+        else:
+            retval = u'not a group member or a site member'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+
+# am-mpj17: cut and paste software engineering follows...
+class GSMessageViewingInfo(object):
+    
+    def __init__(self, context):
+        self.context = context
+        assert hasattr(context, 'messages')
+        self.messages = context.messages
+
+    @property
+    def whoCanView(self):
+        roles = rolesForPermissionOn('View', self.messages)
+        if 'Anonymous' in roles:
+            retval = u'anyone'
+        elif 'DivisionMember' in roles:
+            retval = u'site members'
+        elif 'GroupMember' in roles:
+            retval = u'group members only'
+        elif 'Manager' in roles:
+            retval = u'no-one'
+        else:
+            retval = u'God only'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+        
+    def can_view(self, user):
+        securityManager = AccessControl.getSecurityManager()
+        retval = user.securityManager.checkPermission('View', self.messages)
+        assert type(retval) == bool
+        return retval
+        
+    def status(self, user):
+        isGroupMember = is_member(user, self.messages)
+        isSiteMember = is_site_member(user, self.messages)
+        if isGroupMember:
+            retval = u'a group member'
+        elif not(isGroupMember) and isSiteMember:
+            retval = u'a site member but not a group member'
+        elif 'Manager' in user.getRolesInContext(self.messages):
+            retval = u'a manager'
+        else:
+            retval = u'not a group member or a site member'
+        assert retval
+        assert type(retval) == unicode
+        return retval
+
+class GSDiscussionMembersViewingInfo(object):
+    """In standard GroupServer, the visibility of the Members area
+       is dependent on the visibility of the Messages area"""
+    def __init__(self, context):
+        self.context = context
+        self.messagesViewingInfo = IGSMessagesViewingInfo(context)
+        
+    @property
+    def whoCanView(self):
+        retval = self.messagesViewingInfo.whoCanView
+        assert retval
+        assert type(retval) == unicode
+        return retval
+        
+    def can_view(self, user):
+        retval = self.messagesViewingInfo.can_view(user)
+        assert type(retval) == bool
+        return retval
+        
+    def status(self, user):
+        retval = self.messagesViewingInfo.status(user)
+        assert retval
+        assert type(retval) == unicode
+        return retval
+
+class GSModerationInfo(object):
+
     def __init__(self, context):
         self.context = context
         self.mailingList = mailing_list_from_group(context)
@@ -451,5 +566,10 @@ def below_posting_limit(user, group):
 
 def is_member(user, group):
     retval = 'GroupMember' in user.getRolesInContext(group)
+    assert type(retval) == bool
+    return retval
+
+def is_site_member(user, group):
+    retval = 'DivisionMember' in user.getRolesInContext(group)
     assert type(retval) == bool
     return retval
