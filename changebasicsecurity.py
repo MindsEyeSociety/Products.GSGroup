@@ -71,6 +71,7 @@ class GSGroupChangeBasicSecurityForm(PageForm):
         self.__admin = None
 
     def group_visibility(self, grp):
+        # TODO: Move to a utility
         assert grp
         msgs = getattr(grp, 'messages', None)
         msgsVis = self.__get_visibility(msgs)
@@ -92,11 +93,14 @@ class GSGroupChangeBasicSecurityForm(PageForm):
             and (grpVis == self.PERM_GRP)):
             v = self.SECRET
         
-        retval = ['odd', 'public', 'private', 'secret'][v]
+        vals = ['odd', 'public', 'private', 'secret']
+        retval = vals[v]
         assert type(retval) == str
+        assert retval in vals
         return retval
 
     def __get_visibility(self, instance):
+        # TODO: Move to a utility
         retval = self.PERM_ANN
         if instance:
             roles = [r['name'] for r in instance.rolesOfPermission('View')
@@ -106,6 +110,7 @@ class GSGroupChangeBasicSecurityForm(PageForm):
             elif 'GroupMember' in roles:
                 retval = self.PERM_GRP
         assert type(retval) == int
+        assert retval in (self.PERM_ODD, self.PERM_ANN, self.PERM_GRP)
         return retval
         
     @property
@@ -156,10 +161,11 @@ class GSGroupChangeBasicSecurityForm(PageForm):
         self.set_group_visibility(self.everyone)
         self.set_messages_visibility(self.everyone)
         self.set_files_visibility(self.everyone)
-        
-        retval = u'%s is now a <strong>public</strong> group: everyone, '\
-          u'including userswho are not logged in, can see %s, and the '\
-          u'messages posted to %s' % \
+        self.set_joinability_anyone()
+
+        retval = u'%s is now a <strong>public</strong> group. Everyone, '\
+          u'can see %s, and the messages posted to %s, including users '\
+          u'who are not logged in.' % \
           (self.groupInfo.name, self.groupInfo.name, self.groupInfo.name)
         assert type(retval) == unicode
         vis = self.group_visibility(self.groupInfo.groupObj)
@@ -175,10 +181,12 @@ class GSGroupChangeBasicSecurityForm(PageForm):
         self.set_group_visibility(self.everyone)
         self.set_messages_visibility(self.group)
         self.set_files_visibility(self.group)
+        self.set_joinability_request()
 
         retval = u'%s is now a <strong>private</strong> group. Everyone, '\
-          u'including people who are not logged in, can see %s, but only '\
-          u'group members can see the messages posted to %s' % \
+          u'can see %s, including people who are not logged in. '\
+          u'However, only group members can see the messages posted '\
+          u'to %s.' % \
           (self.groupInfo.name, self.groupInfo.name, self.groupInfo.name)
         assert type(retval) == unicode
         vis = self.group_visibility(self.groupInfo.groupObj)
@@ -194,7 +202,8 @@ class GSGroupChangeBasicSecurityForm(PageForm):
         self.set_group_visibility(self.group)
         self.set_messages_visibility(self.group)
         self.set_files_visibility(self.group)
-
+        self.set_joinability_invite()
+        
         retval = u'%s is now a <strong>secret</strong> group. Only  '\
           u'group members can see %s and the messages posted to %s' % \
           (self.groupInfo.name, self.groupInfo.name, self.groupInfo.name)
@@ -253,4 +262,46 @@ class GSGroupChangeBasicSecurityForm(PageForm):
         files = self.groupInfo.groupObj.files
         files.manage_permission('View', roles)
         files.manage_permission('Access contents information', roles)
+
+    @property
+    def joinability(self):
+        mailingList = getattr(self.context.ListManager, self.groupInfo.id)
+        # --=mpj17=-- This is the rule, I shit you not
+        if getattr(mailinglist, 'subscribe', ''):#?hasattr?
+            retval = 'anyone'
+        elif self.groupInfo.get_property('join_condition', 'open') == 'apply':
+            retval == 'request'
+        else:
+            retval = 'invite'
+        # --=mpj17=-- No, really, that is the rule: if the join_condition
+        #   is 'open' then the group is invitation-only.
+        assert type(retval) == str
+        assert retval in ['anyone', 'request', 'invite']
+        return retval
+
+    def set_joinability_anyone(self):
+        self.__set_list_subscribe('subscribe')
+        self.__set_grp_invite('')
+        
+    def set_joinability_request(self):
+        self.__set_list_subscribe('')
+        self.__set_grp_invite('apply')
+
+    def set_joinability_invite(self):
+        self.__set_list_subscribe('')
+        self.__set_grp_invite('invite')
+
+    def __set_list_subscribe(self, val):
+        mailingList = getattr(self.context.ListManager, self.groupInfo.id)
+        if mailingList.hasProperty('subscribe'):
+            mailingList.manage_changeProperties(subscribe=val)
+        else:
+            mailingList.manage_addProperty('subscribe', val, 'string')
+
+    def __set_grp_invite(self, val):
+        grp = self.groupInfo.groupObj
+        if grp.hasProperty('join_condition'):
+            grp.manage_changeProperties(join_condition=val)
+        else:
+            grp.manage_addProperty('join_condition', val, string)
 
