@@ -54,6 +54,13 @@
     interface=".interfaces.IGSChatPostingInfo" />
 
   <include files="*-group.zcml" />
+  
+  <interface interface=".interfaces.IGSGroupBasicSecuritySettings" />
+  <browser:page 
+    for="Products.XWFChat.interfaces.IGSGroupFolder"
+    name="admin_change_basic_security.html"
+    class=".changebasicsecurity.GSGroupChangeBasicSecurityForm"
+    permission="zope2.ManageProperties"/>
 
 </configure>
 

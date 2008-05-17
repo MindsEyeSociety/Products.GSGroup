@@ -19,6 +19,8 @@ import zope.viewlet.interfaces, zope.contentprovider.interfaces
 from zope.schema import *
 from zope.interface import Interface
 
+from interfacessecurity import *
+
 # Membership
 
 class IGSJoiningInfo(Interface):
