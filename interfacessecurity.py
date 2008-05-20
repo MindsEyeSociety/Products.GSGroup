@@ -7,14 +7,16 @@ from zope.schema import *
 
 publicTerm = SimpleTerm(
   'public', 'public',
-  u'Public: Everyone can see the group, and the posts.')
+  u'Public: Everyone can see the group, view the posts, and join the '\
+  u'group.')
 privateTerm = SimpleTerm(
   'private', 'private',
-  u'Private: Everyone can see the group, but only group members can see '\
-  u'the posts.')
+  u'Private: Everyone can see the group, but only group members can view '\
+  u'the posts. Anyone can request to become a member.')
 secretTerm  = SimpleTerm(
   'secret', 'secret',
-  u'Secret: Only group members can see the group and posts.'
+  u'Secret: Only group members can see the group and posts. People must '\
+  u'be invited to join the group.'
 )
 secruityVocab = SimpleVocabulary([publicTerm, privateTerm, secretTerm])
 class IGSGroupBasicSecuritySettings(Interface):
