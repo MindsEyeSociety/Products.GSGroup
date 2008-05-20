@@ -32,9 +32,14 @@
       <form enctype="multipart/form-data"  method="post" action="."
         tal:attributes="action request/URL" id="change-security">
         
-        <h1 tal:content="view/label">Edit Profile</h1>
+        <h1 tal:content="view/label">Edit Basic Group Security</h1>
         <p>
-          Stuff, for the place, with the thing.
+          There are three basic security settings for an online group:
+          public, private, and secret.
+          Changing the security setting will alter who can see the group
+          and the posts.
+          However, only group members can post messages to the group in
+          all cases.
         </p>
         <tal:block define="widgets view/widgets">
           <tal:block replace="structure provider:groupserver.FormWidgets"/>
