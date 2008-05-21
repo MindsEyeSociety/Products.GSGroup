@@ -337,7 +337,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         if grp.hasProperty('join_condition'):
             grp.manage_changeProperties(join_condition=val)
         else:
-            grp.manage_addProperty('join_condition', val, string)
+            grp.manage_addProperty('join_condition', val, 'string')
 
         assert grp.getProperty('join_condition') == val,\
           'Join condition of the group not set'
