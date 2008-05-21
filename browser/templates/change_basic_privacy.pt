@@ -8,7 +8,7 @@
   <head>
     <title metal:fill-slot="title">
       <span tal:replace="string:${view/label}: ${view/siteInfo/get_name}">
-        Edit Basic Group Security
+        Change Basic Group Privacy
       </span>
     </title>
   </head>
@@ -30,13 +30,13 @@
     </div>
     <tal:block metal:fill-slot="body">
       <form enctype="multipart/form-data"  method="post" action="."
-        tal:attributes="action request/URL" id="change-security">
+        tal:attributes="action request/URL" id="change-group-privacy">
         
-        <h1 tal:content="view/label">Edit Basic Group Security</h1>
+        <h1 tal:content="view/label">Edit Basic Group Privacy</h1>
         <p>
-          There are three basic security settings for an online group:
+          There are three basic privacy settings for an online group:
           public, private, and secret.
-          Changing the security setting will alter who can see the group
+          Changing the privacy setting will alter who can see the group
           and the posts.
           However, only group members can post messages to the group in
           all cases.
@@ -59,7 +59,7 @@
       <script type="text/javascript">
         jQuery.noConflict()
         jQuery(document).ready( function () {
-            GSPopupFormHelp.init('#change-security');
+            GSPopupFormHelp.init('#change-group-privacy');
             });
         });
       </script>
