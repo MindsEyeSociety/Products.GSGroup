@@ -61,6 +61,8 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.siteInfo = createObject('groupserver.SiteInfo', context)
         groupInfo = self.groupInfo = \
           createObject('groupserver.GroupInfo', context)
+        groupsInfo = self.groupsInfo = \
+          createObject('groupserver.GroupsInfo', context)
 
         # Look, a hack!
         grp = groupInfo.groupObj
@@ -88,7 +90,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
           'public':  self.set_group_public,
           'private': self.set_group_private,
           'secret':  self.set_group_secret}[data['basicPrivacy']]()
-                
+        
+        self.groupsInfo.clear_visible_groups_cache()
+        
         assert self.status
         assert type(self.status) == unicode
 
