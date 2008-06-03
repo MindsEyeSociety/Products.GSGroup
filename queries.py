@@ -5,8 +5,10 @@ class GroupQuery(object):
 
     def __init__(self, context, da):
         self.context = context
+        engine = da.engine
+        metadata = sa.BoundMetaData(engine)
 
-        self.postTable = da.createMapper('post')[1] 
+        self.postTable = sa.Table('post', metadata, autoload=True)
         
     def authors_posts_in_group(self, siteId, groupId):
         pt = self.postTable
