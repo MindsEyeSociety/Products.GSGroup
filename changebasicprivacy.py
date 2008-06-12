@@ -91,7 +91,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
           'private': self.set_group_private,
           'secret':  self.set_group_secret}[data['basicPrivacy']]()
         
-        self.groupsInfo.clear_visible_groups_cache()
+        self.groupsInfo.clear_groups_cache()
         
         assert self.status
         assert type(self.status) == unicode
