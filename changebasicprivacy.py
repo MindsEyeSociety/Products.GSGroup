@@ -270,18 +270,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
     @property
     def joinability(self):
-        mailingList = getattr(self.context.ListManager, self.groupInfo.id)
-        # --=mpj17=-- This is the rule, I shit you not
-        if getattr(mailingList, 'subscribe', ''):#?hasattr?
-            retval = 'anyone'
-        elif self.groupInfo.get_property('join_condition', 'open') == 'apply':
-            retval = 'request'
-        else:
-            retval = 'invite'
-        # --=mpj17=-- No, really, that is the rule: if the join_condition
-        #   is 'open' then the group is invitation-only.
-        assert type(retval) == str
-        assert retval in ['anyone', 'request', 'invite']
+        retval = GSGroupJoining(self.groupInfo.groupObj).joinability()
         return retval
 
     def set_joinability_anyone(self):
