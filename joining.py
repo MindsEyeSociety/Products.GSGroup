@@ -14,12 +14,12 @@ class GSGroupJoining(object):
         self.groupInfo = IGSGroupInfo(context)
 
         mailingListManager = site_root.ListManager
-        self.mailingList = mailingListManager.get_list(group.getId())
+        self.mailingList = mailingListManager.get_list(self.groupInfo.id)
         
         self.__joinability = None
         
     @property
-    def joinability(self)
+    def joinability(self):
         if self.__joinability == None:
             # --=mpj17=-- This is the rule, I shit you not
             if getattr(self.mailingList, 'subscribe', ''):#?hasattr?

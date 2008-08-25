@@ -19,7 +19,7 @@ class NotBrokenRadioWidget(RadioWidget):
     _joinButtonToMessageTemplate = u'%s&nbsp;%s\n'
     def renderItem(self, index, text, value, name, cssClass):
         widgetId = '%s.%s' % (name, index)
-        elem = renderElement('input',
+        elem = renderElement(u'input',
                              type="radio",
                              cssClass=cssClass,
                              name=name,
@@ -29,6 +29,19 @@ class NotBrokenRadioWidget(RadioWidget):
           (widgetId, text)
         return self._joinButtonToMessageTemplate %(elem, label)
 
+    def renderSelectedItem(self, index, text, value, name, cssClass):
+        """Render a selected item of the list."""
+        widgetId = '%s.%s' % (name, index)
+        elem = renderElement(u'input',
+                             value=value,
+                             name=name,
+                             id=widgetId,
+                             cssClass=cssClass,
+                             checked="checked",
+                             type='radio')
+        label = '<label class="radioLabel" for="%s">%s</label>' % \
+          (widgetId, text)
+        return self._joinButtonToMessageTemplate %(elem, label)
 
 def radio_widget(field, request):
     return NotBrokenRadioWidget(field, 
