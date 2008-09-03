@@ -11,6 +11,7 @@ from zope.app.form.browser.widget import renderElement
 
 from interfacesprivacy import IGSGroupBasicPrivacySettings
 from Products.CustomUserFolder.interfaces import IGSUserInfo
+from Products.GSGroup.joining import GSGroupJoining
 
 import logging
 log = logging.getLogger('GSGroup')
@@ -283,7 +284,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
     @property
     def joinability(self):
-        retval = GSGroupJoining(self.groupInfo.groupObj).joinability()
+        retval = GSGroupJoining(self.groupInfo.groupObj).joinability
         return retval
 
     def set_joinability_anyone(self):
