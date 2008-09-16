@@ -12,6 +12,10 @@ from zope.app.form.browser.widget import renderElement
 from interfacesprivacy import IGSGroupBasicPrivacySettings
 from Products.CustomUserFolder.interfaces import IGSUserInfo
 from Products.GSGroup.joining import GSGroupJoining
+from Products.XWFMailingListManager.postContentProvider import \
+  GSPostContentProvider
+
+from utils import *
 
 import logging
 log = logging.getLogger('GSGroup')
@@ -106,7 +110,8 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
           'secret':  self.set_group_secret}[data['basicPrivacy']]()
         
         self.groupsInfo.clear_groups_cache()
-        
+        GSPostContentProvider.cookedTemplates.clear()
+        GSPostContentProvider.cookedResult.clear()
         assert self.status
         assert type(self.status) == unicode
 
@@ -120,23 +125,23 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         # TODO: Move to a utility
         assert grp
         msgs = getattr(grp, 'messages', None)
-        msgsVis = self.__get_visibility(msgs)
+        msgsVis = get_visibility(msgs)
         files = getattr(grp, 'files', None)
-        filesVis = self.__get_visibility(files)
-        grpVis = self.__get_visibility(grp)
+        filesVis = get_visibility(files)
+        grpVis = get_visibility(grp)
 
         v = self.ODD
-        if ((msgsVis == self.PERM_ANN) 
-            and (filesVis == self.PERM_ANN)
-            and (grpVis == self.PERM_ANN)):
+        if ((msgsVis == PERM_ANN) 
+            and (filesVis == PERM_ANN)
+            and (grpVis == PERM_ANN)):
             v = self.PUBLIC
-        elif ((msgsVis == self.PERM_GRP) 
-            and (filesVis == self.PERM_GRP)
-            and (grpVis == self.PERM_ANN)):
+        elif ((msgsVis == PERM_GRP) 
+            and (filesVis == PERM_GRP)
+            and (grpVis == PERM_ANN)):
             v = self.PRIVATE
-        elif ((msgsVis == self.PERM_GRP) 
-            and (filesVis == self.PERM_GRP)
-            and (grpVis == self.PERM_GRP)):
+        elif ((msgsVis == PERM_GRP) 
+            and (filesVis == PERM_GRP)
+            and (grpVis == PERM_GRP)):
             v = self.SECRET
         
         vals = ['odd', 'public', 'private', 'secret']
@@ -145,20 +150,6 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         assert retval in vals
         return retval
 
-    def __get_visibility(self, instance):
-        # TODO: Move to a utility
-        retval = self.PERM_ANN
-        if instance:
-            roles = [r['name'] for r in instance.rolesOfPermission('View')
-                     if r and (r['selected'] and r['name']) ]
-            if ('Anonymous' in roles and 'Authenticated') in roles:
-                retval = self.PERM_ANN
-            elif 'GroupMember' in roles:
-                retval = self.PERM_GRP
-        assert type(retval) == int
-        assert retval in (self.PERM_ODD, self.PERM_ANN, self.PERM_GRP)
-        return retval
-        
     @property
     def admin(self):
         if not(self.__admin):
