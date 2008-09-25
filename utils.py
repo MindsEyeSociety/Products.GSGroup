@@ -17,4 +17,11 @@ def get_visibility(instance):
     assert type(retval) == int
     assert retval in (PERM_ODD, PERM_ANN, PERM_GRP)
     return retval
-    
+
+def is_public(g):
+    retval = (get_visibility(g) == PERM_ANN)\
+      and hasattr(g, 'messages')\
+      and (get_visibility(g.messages) == PERM_ANN)
+    assert type(retval) == bool
+    return retval
+
