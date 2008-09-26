@@ -1,5 +1,5 @@
 # coding=utf-8
-from Products.GSContent.interfaces import IGSGroupInfo
+from interfaces import IGSGroupInfo
 from zope.component import createObject
 
 ANYONE  = 'anyone'

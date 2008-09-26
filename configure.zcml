@@ -62,5 +62,25 @@
     class=".changebasicprivacy.GSGroupChangeBasicPrivacyForm"
     permission="zope2.ManageProperties"/>
 
+  <!-- Factories -->
+  <utility factory=".groupInfo.GSGroupInfoFactory"
+    name="groupserver.GroupInfo"
+    permission="zope.Public"/>
+    
+  <adapter provides=".interfaces.IGSGroupInfo"
+                for="zope.app.folder.interfaces.IFolder"
+                permission="zope2.Public"
+                factory=".groupInfo.GSGroupInfo"
+                />
+
+  <utility factory=".mailinglistinfo.GSMailingListInfoFactory"
+    name="groupserver.MailingListInfo"
+    permission="zope.Public"/>
+    
+  <adapter provides=".interfaces.IGSMailingListInfo"
+                for="zope.app.folder.interfaces.IFolder"
+                permission="zope2.Public"
+                factory=".mailinglistinfo.GSMailingListInfo"
+                />
 </configure>
 

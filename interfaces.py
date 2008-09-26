@@ -21,7 +21,33 @@ from zope.interface import Interface
 
 from interfacesprivacy import *
 
-# Membership
+# Info classes
+
+class IGSGroupInfo(Interface):
+    def group_exists(self):
+        """True if the group folder exists"""
+    def get_id(self):
+        """Get the ID of the group"""
+    def get_name(self):
+        """Get the name of the group"""
+    def get_url(self):
+        """Get the URL of the group"""
+    def get_property(self, prop, default):
+        """Get a property of the group folder"""
+
+class IGSMailingListInfo(Interface):
+    def is_moderated(self):
+        """True if the group is moderated, False otherwise"""
+    def is_moderate_new(self):
+        """True if new members are moderated, False otherwise"""
+    def get_moderators(self):
+        """Return the moderators as a list of userInfo objects."""
+    def get_moderatees(self):
+        """Return the moderatees as a list of userInfo objects."""
+    def get_blocked_members(self):
+        """Return the blocked members as a list of userInfo objects."""
+
+# Joining
 
 class IGSJoiningInfo(Interface):
     """Joining information for a group."""
