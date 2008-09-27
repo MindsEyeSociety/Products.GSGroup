@@ -3,10 +3,9 @@ from zope.component import adapts, createObject
 from zope.app.folder.interfaces import IFolder
 from zope.component.interfaces import IFactory
 
-from Products.CustomUserFolder.interfaces import IGSUserInfo
 from interfaces import IGSGroupInfo, IGSMailingListInfo
-from Products.GSGroupMember.groupmembership import user_admin_of_group,\
-  user_participation_coach_of_group
+from Products.GSGroupMember.groupmembership import GroupMembers, \
+  user_admin_of_group, user_participation_coach_of_group
 
 class GSMailingListInfoFactory(object):
     implements(IFactory)
@@ -17,7 +16,7 @@ class GSMailingListInfoFactory(object):
     def __call__(self, context, groupId=None):
         retval = None
         if groupId:
-            mlist = self.__get_mailinglist_object_by_id(context, groupId)
+            mlist = self.__get_mailing_list_object_by_id(context, groupId)
             retval = GSMailingListInfo(mlist)
         else:
             retval = GSMailingListInfo(context)
@@ -32,7 +31,7 @@ class GSMailingListInfoFactory(object):
     # Non-Standard methods below this point #
     #########################################
 
-    def __get_mailinglist_object_by_id(self, context, groupId):
+    def __get_mailing_list_object_by_id(self, context, groupId):
         site_root = context.site_root()
         assert hasattr(site_root, 'ListManager')
         retval = getattr(site_root.ListManager, groupId)
@@ -58,7 +57,7 @@ class GSMailingListInfo(object):
             retval = self.__get_mailing_list_by_id(self.groupObj.getId())
         return retval
 
-    def __get_mailing_list_by_id(self):
+    def __get_mailing_list_by_id(self, groupId):
         retval = None
         
         site_root = self.context.site_root()
@@ -71,7 +70,6 @@ class GSMailingListInfo(object):
     @property
     def is_moderated(self):
         retval = self.get_mlist_property('moderated', False)
-        assert type(retval)==bool
         return retval
 
     @property
@@ -79,19 +77,21 @@ class GSMailingListInfo(object):
         retval = False
         if self.is_moderated:
             retval = self.get_mlist_property('moderate_new_members', False)
-        assert type(retval)==bool
         return retval
 
     @property
     def moderators(self):
         return self.get_moderators()
     def get_moderators(self):
-        """ Return the moderators as a list of userInfo objects.
+        """ Find and return all the moderators as a list of userInfo objects.
+        The userIds of all moderators are assumed to be stored in a property 
+        called 'moderator_members' of type 'lines'.
         """
         retval = []
         if self.is_moderated:
-            retval = [ IGSUserInfo(u) for u in \
-              self.get_mlist_property('moderator_members', []) ]
+            retval = [ createObject('groupserver.UserFromId', \
+                        self.context, uid) for uid in \
+                          self.get_mlist_property('moderator_members', []) ]
         assert type(retval)==list
         return retval
 
@@ -99,23 +99,33 @@ class GSMailingListInfo(object):
     def moderatees(self):
         return self.get_moderatees()
     def get_moderatees(self):
-        """ Return the moderatees as a list of userInfo objects.
+        """ Find and return all moderated members as a list of userInfo objects.
+        The userIds of specified moderated members are assumed to be stored in a 
+        property called 'moderated_members' of type 'lines'.
+          If this property does not exist or does not contain any userIds, then
+        there are two possibilities: either no members are moderated, or all
+        group members (other than administrators, moderators and the ptn coach)
+        are moderated. 
+          The deciding factor is whether 'Moderate New Members' is on: 
+           - If so, then it is assumed that *no members* are being moderated. 
+           - If not, then it is assumed that *all normal members* are moderated.
         """
         retval = []
         if self.is_moderated:
             moderated_ids = self.get_mlist_property('moderated_members', [])
             if moderated_ids:
-                retval = [ IGSUserInfo(u) for u in moderated_ids ]
+                retval = [ createObject('groupserver.UserFromId', \
+                            self.context, uid) for uid in \
+                              moderated_ids ]
             elif not(self.is_moderate_new):
-                # No user IDs are specified, so we're moderating everyone
-                # except special people
-                group_members = [ IGSUserInfo(u) for u in \
-                  createObject('groupserver.GroupMembers', self.groupObj) ]
+                group_members = GroupMembers(self.groupObj).members
                 retval = [ u for u in group_members if \
-                  (not(user_admin_of_group(u, self.groupInfo)) and \
-                  not(user_participation_coach_of_group(u, self.groupInfo) and \
-                  (u not in self.moderators) and \
-                  (u not in self.blocked_members))) ]
+                          (not(user_admin_of_group(u, \
+                              self.groupInfo)) and \
+                           not(user_participation_coach_of_group(u, \
+                              self.groupInfo) and \
+                           (u not in self.moderators) and \
+                           (u not in self.blocked_members))) ]
         assert type(retval)==list
         return retval
 
@@ -123,10 +133,13 @@ class GSMailingListInfo(object):
     def blocked_members(self):
         return self.get_blocked_members()
     def get_blocked_members(self):
-        """ Return the blocked members as a list of userInfo objects.
+        """ Find and return all blocked members as a list of userInfo objects.
+        The userIds of all blocked members are assumed to be stored in a 
+        property called 'blocked_members' of type 'lines'.
         """
-        retval = [ IGSUserInfo(u) for u in \
-              self.get_mlist_property('moderator_members', []) ]
+        retval = [ createObject('groupserver.UserFromId', \
+                    self.context, uid) for uid in \
+                      self.get_mlist_property('blocked_members', []) ]
         assert type(retval)==list
         return retval
 
@@ -134,10 +147,19 @@ class GSMailingListInfo(object):
     def posting_members(self):
         return self.get_posting_members()
     def get_posting_members(self):
-        """ Return the posting members as a list of userInfo objects.
+        """ Find and return all posting members as a list of userInfo objects.
+        The userIds of specified posting members are assumed to be stored in a 
+        property called 'posting_members' of type 'lines'. If this property does 
+        not exist or does not contain any userIds, then all group members are 
+        assumed to be posting members.
         """
-        retval = [ IGSUserInfo(u) for u in \
-              self.get_mlist_property('posting_members', []) ]
+        postingIds = self.get_mlist_property('posting_members', [])
+        if postingIds:
+            retval = [ createObject('groupserver.UserFromId', \
+                        self.context, uid) for uid in \
+                          postingIds ]
+        else:
+            retval = GroupMembers(self.groupObj).members
         assert type(retval)==list
         return retval
 

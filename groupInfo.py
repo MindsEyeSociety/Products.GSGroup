@@ -129,6 +129,32 @@ class GSGroupInfo(object):
             retval = '%s/%s' % (retval, self.groupObj.getId())
         return retval
         
+    @property
+    def group_type(self):
+        return self.get_group_type()
+    def get_group_type(self):
+        """ AM: A more robust method of identifying the group type will
+              replace this once we have interfaces for the various
+              group types. For now, horrible as it is, this method 
+              reflects how we currently identify the group type.
+        """
+        retval = ''
+        if self.group_exists():
+            gsTypes = ['discussion', 'announcement', 'support']
+            abelTypes = ['ewg', 'ett', 'esg', 'facilitator']
+            groupTypes = gsTypes + abelTypes
+            templateType = self.get_property('group_template','')
+            if templateType == 'standard':
+                retval = groupTypes[0]
+            elif templateType in groupTypes:
+                retval = groupTypes[groupTypes.index(templateType)]
+            elif templateType:
+                retval = 'odd'
+        if retval:
+            assert (retval in groupTypes) or (retval == 'odd')
+        assert type(retval) == str
+        return retval
+
     def get_property(self, prop, default=None):
         assert self.groupObj, 'Group instance does not exist\n'\
           'Context %s\nID %s' % (self.context, self.groupId)
