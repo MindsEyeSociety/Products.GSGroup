@@ -9,7 +9,7 @@ from Products.XWFCore.XWFUtils import getOption
 from Products.GSGroupMember.utils import inform_ptn_coach_of_join, invite_id
 
 from Products.CustomUserFolder.interfaces import IGSUserInfo, ICustomUser
-from Products.GSContent.interfaces import IGSGroupInfo
+from interfaces import IGSGroupInfo
 from Products.XWFCore.XWFUtils import sort_by_name
 
 from utils import *
