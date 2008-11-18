@@ -155,6 +155,18 @@ class GSGroupInfo(object):
         assert type(retval) == str
         return retval
 
+    @property
+    def ptn_coach(self):
+        return self.get_ptn_coach()
+    def get_ptn_coach(self):
+        retval = None
+        if self.group_exists():
+            ptnCoachId = self.get_property('ptn_coach_id','')
+            if ptnCoachId:
+                retval = createObject('groupserver.UserFromId', self.context, 
+                                      ptnCoachId)
+        return retval
+
     def get_property(self, prop, default=None):
         assert self.groupObj, 'Group instance does not exist\n'\
           'Context %s\nID %s' % (self.context, self.groupId)
