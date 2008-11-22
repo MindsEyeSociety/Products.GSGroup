@@ -1,9 +1,24 @@
+import datetime
+from Products.XWFCore.cache import SimpleCacheWithExpiry
+
+visibilityCache = SimpleCacheWithExpiry('GSGroup.utils.visibilityCache')
+visibilityCache.set_expiry_interval(datetime.timedelta(0,60))
+
 #coding: utf-8
 PERM_ODD = 0
 PERM_ANN = 1
 PERM_GRP = 2
 
 def get_visibility(instance):
+    if instance:
+        cache_key = str(instance.getPhysicalPath())
+    else:
+        cache_key = 'None'
+    
+    cached_retval = visibilityCache.get(cache_key)
+    if cached_retval:
+        return cached_retval    
+    
     retval = PERM_ODD
     if instance:
         assert hasattr(instance, 'rolesOfPermission'),\
@@ -16,6 +31,9 @@ def get_visibility(instance):
             retval = PERM_GRP
     assert type(retval) == int
     assert retval in (PERM_ODD, PERM_ANN, PERM_GRP)
+
+    visibilityCache.add(cache_key, retval)
+
     return retval
 
 def is_public(g):
