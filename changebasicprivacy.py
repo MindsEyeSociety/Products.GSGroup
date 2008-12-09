@@ -20,6 +20,8 @@ from utils import *
 import logging
 log = logging.getLogger('GSGroup')
 
+ACI = 'Access contents information'
+
 class NotBrokenRadioWidget(RadioWidget):
     _joinButtonToMessageTemplate = u'%s&nbsp;%s\n'
     def renderItem(self, index, text, value, name, cssClass):
@@ -153,12 +155,12 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
     @property
     def admin(self):
         if not(self.__admin):
-            loggedInUser = self.request.AUTHENTICATED_USER
-            assert loggedInUser
-            roles = loggedInUser.getRolesInContext(self.groupInfo.groupObj)
+            loggedInUser = createObject('groupserver.LoggedInUser',
+                self.context)
+            roles = loggedInUser.user.getRolesInContext(self.groupInfo.groupObj)
             assert ('GroupAdmin' in roles) or ('DivisionAdmin' in roles), \
               '%s is not a group admin' % loggedInUser
-            self.__admin = IGSUserInfo(loggedInUser)
+            self.__admin = loggedInUser
         assert self.__admin
         return self.__admin
 
@@ -236,7 +238,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         group = self.groupInfo.groupObj
         group.manage_permission('View', roles)
-        group.manage_permission('Access contents information', roles)
+        group.manage_permission(ACI, roles)
+        clear_visibility_cache(group)
+
     
     def set_messages_visibility(self, roles):
         assert type(roles) == list
@@ -254,8 +258,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         messages = self.groupInfo.groupObj.messages
         messages.manage_permission('View', roles)
-        messages.manage_permission('Access contents information', roles)
-
+        messages.manage_permission(ACI, roles)
+        clear_visibility_cache(messages)
+        
     def set_files_visibility(self, roles):
         assert self.groupInfo
         assert self.groupInfo.groupObj
@@ -271,8 +276,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         files = self.groupInfo.groupObj.files
         files.manage_permission('View', roles)
-        files.manage_permission('Access contents information', roles)
-
+        files.manage_permission(ACI, roles)
+        clear_visibility_cache(files)
+        
     @property
     def joinability(self):
         retval = GSGroupJoining(self.groupInfo.groupObj).joinability
