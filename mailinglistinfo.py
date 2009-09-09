@@ -163,8 +163,10 @@ class GSMailingListInfo(object):
         assert type(retval)==list
         return retval
 
+    def get_property(self, prop, default=None):
+        return self.get_mlist_property(prop, default=None)
     def get_mlist_property(self, prop, default=None):
         assert self.mlist, 'Mailing list does not exist\n'\
           'Context %s\nID %s' % (self.context, self.groupId)
         return self.mlist.getProperty(prop, default)
-        
+
