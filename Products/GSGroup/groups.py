@@ -6,16 +6,13 @@ from zope.schema.interfaces import IVocabulary,\
   IVocabularyTokenized, ITitledTokenizedTerm
 from zope.interface.common.mapping import IEnumerableMapping 
 from Products.XWFCore.XWFUtils import getOption
-from Products.GSGroupMember.utils import inform_ptn_coach_of_join, invite_id
+from Products.GSGroupMember.utils import inform_ptn_coach_of_join
 
 from Products.CustomUserFolder.interfaces import IGSUserInfo, ICustomUser
 from interfaces import IGSGroupInfo
 from Products.XWFCore.XWFUtils import sort_by_name
 
 from utils import *
-
-import logging
-log = logging.getLogger('GSGroupMember GroupMembership')
 
 class PublicGroupsForSite(object):
     implements(IVocabulary, IVocabularyTokenized)
