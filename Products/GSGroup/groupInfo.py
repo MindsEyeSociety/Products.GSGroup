@@ -172,4 +172,14 @@ class GSGroupInfo(object):
         assert self.groupObj, 'Group instance does not exist\n'\
           'Context %s\nID %s' % (self.context, self.groupId)
         return self.groupObj.getProperty(prop, default)
-        
+
+def groupInfo_to_anchor(groupInfo):
+    assert groupInfo
+    assert isinstance(groupInfo, GSGroupInfo), \
+        '%s is not a GroupInfo' % groupInfo
+    retval = u'<a href="%s" class="group">%s</a>' % \
+        (groupInfo.uri, groupInfo.name)
+    assert retval
+    assert type(retval) == unicode
+    return retval
+
