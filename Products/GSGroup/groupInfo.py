@@ -125,9 +125,8 @@ class GSGroupInfo(object):
     def url(self):
         return self.get_url()
     def get_url(self):
-        retval = '%s/groups' % self.siteInfo.get_url()
-        if self.group_exists():
-            retval = '%s/%s' % (retval, self.groupObj.getId())
+        assert(self.group_exists()), 'Group "%s" does not exist' % self.id
+        retval = '/groups/%s' % self.id
         return retval
         
     @property
@@ -178,7 +177,7 @@ def groupInfo_to_anchor(groupInfo):
     assert isinstance(groupInfo, GSGroupInfo), \
         '%s is not a GroupInfo' % groupInfo
     retval = u'<a href="%s" class="group">%s</a>' % \
-        (groupInfo.uri, groupInfo.name)
+        (groupInfo.url, groupInfo.name)
     assert retval
     assert type(retval) == unicode
     return retval
