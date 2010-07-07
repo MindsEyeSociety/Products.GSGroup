@@ -1,8 +1,11 @@
 #coding: utf-8
 '''Change the Basic Privacy Settings of a GroupServer Group
 '''
+try:
+    from Products.Five.formlib.formbase import PageForm
+except ImportError:
+    from five.formlib.formbase import PageForm
 
-from Products.Five.formlib.formbase import PageForm
 from zope.component import createObject
 from zope.formlib import form
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
