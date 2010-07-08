@@ -2,14 +2,11 @@
 <configure xmlns="http://namespaces.zope.org/zope"
   xmlns:browser="http://namespaces.zope.org/browser"
   xmlns:rdb="http://namespaces.zope.org/rdb"
-  xmlns:sqlos="http://namespaces.sqlobject.org/sqlos"
-  xmlns:five="http://namespaces.zope.org/five">
+  xmlns:sqlos="http://namespaces.sqlobject.org/sqlos">
 
-  <!-- declare a marker interface on the Folder class to allow us 
-    to add marker Interfaces, views and adaptation -->
-  <five:implements 
-    class="OFS.Folder.Folder"
-    interface="zope.app.folder.interfaces.IFolder" />
+  <class class="OFS.Folder.Folder">
+      <implements interface="zope.app.folder.interfaces.IFolder" />
+  </class>
   
   <interface 
     interface=".interfaces.IGSJoiningInfo" />
