@@ -166,6 +166,15 @@ class GSGroupInfo(object):
                 retval = createObject('groupserver.UserFromId', self.context, 
                                       ptnCoachId)
         return retval
+      
+    @property
+    def group_admins(self):
+        return self.get_group_admins()
+    def get_group_admins(self):
+        admins = self.groupObj.users_with_local_role('GroupAdmin')
+        retval = [ createObject('groupserver.UserFromId', 
+                      self.context, a) for a in admins ]
+        return retval
 
     def get_property(self, prop, default=None):
         assert self.groupObj, 'Group instance does not exist\n'\
