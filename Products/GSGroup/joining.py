@@ -1,6 +1,8 @@
 # coding=utf-8
 from interfaces import IGSGroupInfo
 from zope.component import createObject
+from Products.XWFCore.XWFUtils import comma_comma_and
+from Products.CustomUserFolder.userinfo import userInfo_to_anchor
 
 ANYONE  = 'anyone'
 REQUEST = 'request'
@@ -17,6 +19,7 @@ class GSGroupJoining(object):
         self.mailingList = mailingListManager.get_list(self.groupInfo.id)
         
         self.__joinability = None
+        self.__rejoin_advice = None
         
     @property
     def joinability(self):
@@ -35,3 +38,22 @@ class GSGroupJoining(object):
         assert retval in [ANYONE, REQUEST, INVITE]
         return retval
             
+    @property
+    def rejoin_advice(self):
+        if self.__rejoin_advice == None:
+            if self.joinability == ANYONE:
+                self.__rejoin_advice = u'you can rejoin at any time'
+            elif self.joinability == REQUEST:
+                admins = self.groupInfo.group_admins
+                #self.__rejoin_advice = u'to rejoin, you must be '\
+                #  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins], conj='or')
+                self.__rejoin_advice = u'to rejoin, you can apply to '\
+                  u'%s at any time' % comma_comma_and([userInfo_to_anchor(a) for a in admins])
+            elif self.joinability == INVITE:
+                admins = self.groupInfo.group_admins
+                #self.__rejoin_advice = u'to rejoin, you must be '\
+                #  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins], conj='or')
+                self.__rejoin_advice = u'to rejoin, you must be '\
+                  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins])
+        return self.__rejoin_advice
+    

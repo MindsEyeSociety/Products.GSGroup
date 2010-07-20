@@ -57,3 +57,9 @@ def is_public(g):
     assert type(retval) == bool
     return retval
 
+def is_secret(g):
+    retval = (get_visibility(g) == PERM_GRP)\
+      and hasattr(g, 'messages')\
+      and (get_visibility(g.messages) == PERM_GRP)
+    assert type(retval) == bool
+    return retval
