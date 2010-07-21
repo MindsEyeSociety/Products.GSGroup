@@ -39,7 +39,7 @@ class GSGroupInfo(object):
     def __init__(self, context, groupId=None):
         self.context = context
         self.groupId = groupId
-        self.siteInfo = createObject('groupserver.SiteInfo', self.context)
+        self.siteInfo = createObject('groupserver.SiteInfo', context)
         self.groupObj = self.__get_group_object()
 
     def __get_group_object(self):
