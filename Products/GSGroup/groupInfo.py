@@ -2,8 +2,8 @@ from zope.interface import implements, implementedBy
 from zope.component import adapts, createObject
 from zope.app.folder.interfaces import IFolder
 from interfaces import IGSGroupInfo
-from Products.GSContent.interfaces import IGSGroupsInfo
 from zope.component.interfaces import IFactory
+from gs.groups.interfaces import IGSGroupsInfo
 
 class GSGroupInfoFactory(object):
     implements(IFactory)
