@@ -12,12 +12,7 @@ class GSGroupInfoFactory(object):
     descripton = u'Create a new GroupServer group information instance'
     
     def __call__(self, context, groupId=None):
-        retval = None
-        if groupId:
-            group = self.__get_group_object_by_id(context, groupId)
-            retval = GSGroupInfo(group)
-        else:
-            retval = GSGroupInfo(context)
+        retval = GSGroupInfo(context, groupId)
         return retval
         
     def getInterfaces(self):
@@ -48,7 +43,6 @@ class GSGroupInfo(object):
         self.groupObj = self.__get_group_object()
 
     def __get_group_object(self):
-        retval = None
         if self.groupId:
             retval = self.__get_group_object_by_id(self.groupId)
         else:
@@ -57,15 +51,12 @@ class GSGroupInfo(object):
         
     def __get_group_object_by_id(self, groupId):
         retval = None
-        
         site_root = self.context.site_root()
         content = getattr(site_root, 'Content')
         site = getattr(content, self.siteInfo.get_id())
         groups = getattr(site, 'groups')
-        
         if hasattr(groups, groupId):
             retval = getattr(groups, groupId)
-            
         return retval
         
     def __get_group_object_by_acquisition(self):

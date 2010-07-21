@@ -15,11 +15,7 @@ class GSMailingListInfoFactory(object):
     
     def __call__(self, context, groupId=None):
         retval = None
-        if groupId:
-            mlist = self.__get_mailing_list_object_by_id(context, groupId)
-            retval = GSMailingListInfo(mlist)
-        else:
-            retval = GSMailingListInfo(context)
+        retval = GSMailingListInfo(context, groupId)
         return retval
         
     def getInterfaces(self):
@@ -45,8 +41,10 @@ class GSMailingListInfo(object):
     def __init__(self, context, groupId=None):
         self.context = context
         self.groupId = groupId
-        self.groupInfo = createObject('groupserver.GroupInfo', self.context)
+        self.groupInfo = createObject('groupserver.GroupInfo', 
+                            self.context, groupId)
         self.groupObj = self.groupInfo.groupObj
+        assert self.groupObj, 'No group. Blame Zope.'
         self.mlist = self.__get_mailing_list()
         
     def __get_mailing_list(self):
