@@ -45,15 +45,11 @@ class GSGroupJoining(object):
                 self.__rejoin_advice = u'you can rejoin at any time'
             elif self.joinability == REQUEST:
                 admins = self.groupInfo.group_admins
-                #self.__rejoin_advice = u'to rejoin, you must be '\
-                #  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins], conj='or')
                 self.__rejoin_advice = u'to rejoin, you can apply to '\
-                  u'%s at any time' % comma_comma_and([userInfo_to_anchor(a) for a in admins])
+                  u'%s at any time' % comma_comma_and([userInfo_to_anchor(a) for a in admins], conj='or')
             elif self.joinability == INVITE:
                 admins = self.groupInfo.group_admins
-                #self.__rejoin_advice = u'to rejoin, you must be '\
-                #  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins], conj='or')
                 self.__rejoin_advice = u'to rejoin, you must be '\
-                  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins])
+                  u'invited by %s' % comma_comma_and([userInfo_to_anchor(a) for a in admins], conj='or')
         return self.__rejoin_advice
     

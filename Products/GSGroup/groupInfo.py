@@ -167,6 +167,10 @@ class GSGroupInfo(object):
                       self.context, a) for a in admins ]
         return retval
 
+    @property
+    def site_admins(self):
+        return self.siteInfo.site_admins
+
     def get_property(self, prop, default=None):
         assert self.groupObj, 'Group instance does not exist\n'\
           'Context %s\nID %s' % (self.context, self.groupId)
