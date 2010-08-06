@@ -33,8 +33,8 @@ class GSGroupInfoFactory(object):
         return retval
 
 class GSGroupInfo(object):
-    implements( IGSGroupInfo )
-    adapts( IFolder )
+    implements(IGSGroupInfo)
+    adapts(IFolder)
     
     def __init__(self, context, groupId=None):
         self.context = context
@@ -134,7 +134,7 @@ class GSGroupInfo(object):
             gsTypes = ['discussion', 'announcement', 'support']
             abelTypes = ['ewg', 'ett', 'esg', 'facilitator']
             groupTypes = gsTypes + abelTypes
-            templateType = self.get_property('group_template','')
+            templateType = self.get_property('group_template', '')
             if templateType == 'standard':
                 retval = groupTypes[0]
             elif templateType in groupTypes:
@@ -152,9 +152,9 @@ class GSGroupInfo(object):
     def get_ptn_coach(self):
         retval = None
         if self.group_exists():
-            ptnCoachId = self.get_property('ptn_coach_id','')
+            ptnCoachId = self.get_property('ptn_coach_id', '')
             if ptnCoachId:
-                retval = createObject('groupserver.UserFromId', self.context, 
+                retval = createObject('groupserver.UserFromId', self.context,
                                       ptnCoachId)
         return retval
       
@@ -163,7 +163,7 @@ class GSGroupInfo(object):
         return self.get_group_admins()
     def get_group_admins(self):
         admins = self.groupObj.users_with_local_role('GroupAdmin')
-        retval = [ createObject('groupserver.UserFromId', 
+        retval = [ createObject('groupserver.UserFromId',
                       self.context, a) for a in admins ]
         return retval
 

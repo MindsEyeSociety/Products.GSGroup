@@ -12,17 +12,15 @@ class GroupQuery(object):
         cols = [pt.c.user_id.distinct(),
                 sa.func.count(pt.c.user_id).label('num_posts')]
         statement = sa.select(cols)
-        statement.append_whereclause(pt.c.site_id==siteId)
-        statement.append_whereclause(pt.c.group_id==groupId)
+        statement.append_whereclause(pt.c.site_id == siteId)
+        statement.append_whereclause(pt.c.group_id == groupId)
         statement.group_by(pt.c.user_id)
 
         r = statement.execute()
         retval = []
         if r.rowcount:
             for row in r:
-                retval.append({'user_id': row['user_id'], 
+                retval.append({'user_id': row['user_id'],
                                'num_posts': row['num_posts']})
         return retval
 
-
-    

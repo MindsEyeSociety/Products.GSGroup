@@ -2,17 +2,10 @@
 from zope.interface import implements, providedBy
 from zope.component import createObject
 from zope.schema.vocabulary import SimpleTerm
-from zope.schema.interfaces import IVocabulary,\
+from zope.schema.interfaces import IVocabulary, \
   IVocabularyTokenized, ITitledTokenizedTerm
 from zope.interface.common.mapping import IEnumerableMapping 
-from Products.XWFCore.XWFUtils import getOption
-from Products.GSGroupMember.utils import inform_ptn_coach_of_join
-
-from Products.CustomUserFolder.interfaces import IGSUserInfo, ICustomUser
-from interfaces import IGSGroupInfo
-from Products.XWFCore.XWFUtils import sort_by_name
-
-from utils import *
+from utils import is_public
 
 class PublicGroupsForSite(object):
     implements(IVocabulary, IVocabularyTokenized)

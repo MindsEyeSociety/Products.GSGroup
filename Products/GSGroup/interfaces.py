@@ -14,11 +14,7 @@ the "IGSModerationInfo", interface. The latter does not have any methods,
 and supplies information about the entire group; the former also proides
 methods for determining the type of administrator the user is.
 """
-import zope.component
-import zope.viewlet.interfaces, zope.contentprovider.interfaces 
 from zope.schema import *
-from zope.interface import Interface
-
 from interfacesprivacy import *
 
 # Info classes
@@ -56,22 +52,22 @@ class IGSJoiningInfo(Interface):
       description=u'Group-context for the joining information')
     
     joinability = Text(title=u'Joinability',
-      description = u'The joining-status for the group.',
+      description=u'The joining-status for the group.',
       readonly=True)
     
     def can_join(user):
-      """Can the user can join the group?
-        
-        ARGUMENTS
-          "user" A user.
-        
-        RETURNS
-          "True" if the user is not a group member and can join the group;
-          "False" otherwise.
-            
-        SIDE EFFECTS
-          None.
-        """
+        """Can the user can join the group?
+          
+          ARGUMENTS
+            "user" A user.
+          
+          RETURNS
+            "True" if the user is not a group member and can join the group;
+            "False" otherwise.
+              
+          SIDE EFFECTS
+            None.
+          """
     def status(user):
         """Can the user can leave the group?
         
@@ -93,7 +89,7 @@ class IGSLeavingInfo(Interface):
       description=u'Group-context for the leaving information')
     
     leavability = Text(title=u'Leavability',
-      description = u'The leaving-status for the group.',
+      description=u'The leaving-status for the group.',
       readonly=True)
         
     def can_leave(user):

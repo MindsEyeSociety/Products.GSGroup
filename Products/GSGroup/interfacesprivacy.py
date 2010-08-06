@@ -3,7 +3,7 @@
 '''
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.interface import Interface
-from zope.schema import *
+from zope.schema import Choice
 
 publicTerm = SimpleTerm(
   'public', 'public',
@@ -13,7 +13,7 @@ privateTerm = SimpleTerm(
   'private', 'private',
   u'Private: Everyone can view the group, but only group members can view '\
   u'the posts. Anyone can request to become a member.')
-secretTerm  = SimpleTerm(
+secretTerm = SimpleTerm(
   'secret', 'secret',
   u'Secret: Only group members can view the group and posts. People must '\
   u'be invited to join the group.'

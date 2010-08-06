@@ -2,7 +2,7 @@ import datetime
 from Products.XWFCore.cache import SimpleCacheWithExpiry
 
 visibilityCache = SimpleCacheWithExpiry('GSGroup.utils.visibilityCache')
-visibilityCache.set_expiry_interval(datetime.timedelta(0,60))
+visibilityCache.set_expiry_interval(datetime.timedelta(0, 60))
 
 #coding: utf-8
 PERM_ODD = 0
@@ -43,7 +43,7 @@ def clear_visibility_cache(instance):
 
 def get_roles_with_perm(instance, perm):
     assert instance
-    assert hasattr(instance, 'rolesOfPermission'),\
+    assert hasattr(instance, 'rolesOfPermission'), \
       u'Instance %s has no rolesOfPermission' % instance
     retval = [r['name'] for r in instance.rolesOfPermission(perm)
                   if r and (r['selected'] == 'SELECTED' and r['name']) ]

@@ -4,9 +4,9 @@ from zope.component import createObject
 from Products.XWFCore.XWFUtils import comma_comma_and
 from Products.CustomUserFolder.userinfo import userInfo_to_anchor
 
-ANYONE  = 'anyone'
+ANYONE = 'anyone'
 REQUEST = 'request'
-INVITE  = 'invite'
+INVITE = 'invite'
 
 class GSGroupJoining(object):
     

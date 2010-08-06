@@ -13,12 +13,11 @@ from zope.app.form.browser import RadioWidget
 from zope.app.form.browser.widget import renderElement
 
 from interfacesprivacy import IGSGroupBasicPrivacySettings
-from Products.CustomUserFolder.interfaces import IGSUserInfo
 from Products.GSGroup.joining import GSGroupJoining
 from Products.XWFMailingListManager.postContentProvider import \
   GSPostContentProvider
 
-from utils import *
+from utils import PERM_ANN, PERM_GRP, get_visibility, clear_visibility_cache
 
 import logging
 log = logging.getLogger('GSGroup')
@@ -37,7 +36,7 @@ class NotBrokenRadioWidget(RadioWidget):
                              value=value)
         label = '<label class="radioLabel" for="%s">%s</label>' % \
           (widgetId, text)
-        return self._joinButtonToMessageTemplate %(elem, label)
+        return self._joinButtonToMessageTemplate % (elem, label)
 
     def renderSelectedItem(self, index, text, value, name, cssClass):
         """Render a selected item of the list."""
@@ -51,11 +50,11 @@ class NotBrokenRadioWidget(RadioWidget):
                              type='radio')
         label = '<label class="radioLabel" for="%s">%s</label>' % \
           (widgetId, text)
-        return self._joinButtonToMessageTemplate %(elem, label)
+        return self._joinButtonToMessageTemplate % (elem, label)
 
 def radio_widget(field, request):
-    return NotBrokenRadioWidget(field, 
-                                field.vocabulary, 
+    return NotBrokenRadioWidget(field,
+                                field.vocabulary,
                                 request)
 
 class GSGroupChangeBasicPrivacyForm(PageForm):
@@ -66,9 +65,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
     template = ZopeTwoPageTemplateFile(pageTemplateFileName)
 
     everyone = ['Anonymous', 'Authenticated', 'DivisionMember',
-      'DivisionAdmin','GroupAdmin','GroupMember','Manager', 'Owner']
+      'DivisionAdmin', 'GroupAdmin', 'GroupMember', 'Manager', 'Owner']
     
-    group = ['DivisionAdmin','GroupAdmin','GroupMember','Manager', 'Owner']
+    group = ['DivisionAdmin', 'GroupAdmin', 'GroupMember', 'Manager', 'Owner']
 
     PERM_ODD = 0
     PERM_ANN = 1
@@ -84,8 +83,6 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.siteInfo = createObject('groupserver.SiteInfo', context)
         groupInfo = self.groupInfo = \
           createObject('groupserver.GroupInfo', context)
-        groupsInfo = self.groupsInfo = \
-          createObject('groupserver.GroupsInfo', context)
 
         # Look, a hack!
         grp = groupInfo.groupObj
@@ -101,10 +98,10 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         assert self.form_fields
         
         m = u'Changing privacy of the group %s (%s) on %s (%s) from "%s" '\
-          u'to "%s" for the administrator %s (%s)'%\
-           (self.groupInfo.name, self.groupInfo.id, 
-            self.siteInfo.name, self.siteInfo.id, 
-            self.group_visibility(self.groupInfo.groupObj), 
+          u'to "%s" for the administrator %s (%s)' % \
+           (self.groupInfo.name, self.groupInfo.id,
+            self.siteInfo.name, self.siteInfo.id,
+            self.group_visibility(self.groupInfo.groupObj),
             data['basicPrivacy'],
             self.admin.name, self.admin.id)
         log.info(m)
@@ -182,7 +179,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.set_joinability_anyone()
 
         vis = self.group_visibility(self.groupInfo.groupObj)
-        assert vis == 'public', 'Visibility of %s (%s) is %s, not public'%\
+        assert vis == 'public', 'Visibility of %s (%s) is %s, not public' % \
           (self.groupInfo.name, self.groupInfo.id, vis)
 
         retval = u'%s is now a <strong>public</strong> group. Everyone, '\
@@ -199,7 +196,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.set_joinability_request()
 
         vis = self.group_visibility(self.groupInfo.groupObj)
-        assert vis == 'private', 'Visibility of %s (%s) is %s, not private'%\
+        assert vis == 'private', 'Visibility of %s (%s) is %s, not private' % \
           (self.groupInfo.name, self.groupInfo.id, vis)
 
         retval = u'%s is now a <strong>private</strong> group. Everyone, '\
@@ -217,7 +214,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.set_joinability_invite()
         
         vis = self.group_visibility(self.groupInfo.groupObj)
-        assert vis == 'secret', 'Visibility of %s (%s) is %s, not secret'%\
+        assert vis == 'secret', 'Visibility of %s (%s) is %s, not secret' % \
           (self.groupInfo.name, self.groupInfo.id, vis)
 
         retval = u'%s is now a <strong>secret</strong> group. Only  '\
@@ -233,7 +230,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         m = u'set_group_visibility: Giving the roles %s "View" and '\
           u'"Access contents information" permission in the group '\
-          u'%s (%s) on %s (%s) for the administrator %s (%s)' %\
+          u'%s (%s) on %s (%s) for the administrator %s (%s)' % \
           (roles, self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            self.admin.name, self.admin.id)
@@ -253,8 +250,8 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         m = u'set_messages_visibility: Giving the roles %s "View" and '\
           u'"Access contents information" permission in the group '\
-          u'%s (%s) on %s (%s) for the administrator %s (%s).' %\
-          (roles, self.groupInfo.name, self.groupInfo.id, 
+          u'%s (%s) on %s (%s) for the administrator %s (%s).' % \
+          (roles, self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            self.admin.name, self.admin.id)
         log.info(m)
@@ -271,8 +268,8 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         m = u'set_files_visibility: Giving the roles %s "View" and '\
           u'"Access contents information" permission in the group '\
-          u'%s (%s) on %s (%s) for the administrator %s (%s)' %\
-          (roles, self.groupInfo.name, self.groupInfo.id, 
+          u'%s (%s) on %s (%s) for the administrator %s (%s)' % \
+          (roles, self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            self.admin.name, self.admin.id)
         log.info(m)
@@ -294,7 +291,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         m = u'Set joinability of the group %s (%s) on %s (%s) to "anyone" '\
           u'for the administrator %s (%s)' % \
-          (self.groupInfo.name, self.groupInfo.id, 
+          (self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            self.admin.name, self.admin.id)
         log.info(m)
@@ -306,7 +303,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         m = u'Set joinability of the group %s (%s) on %s (%s) to "request" '\
           u'for the administrator %s (%s)' % \
-          (self.groupInfo.name, self.groupInfo.id, 
+          (self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            self.admin.name, self.admin.id)
         log.info(m)
@@ -318,7 +315,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
 
         m = u'Set joinability of the group %s (%s) on %s (%s) to "invite" '\
           u'for the administrator %s (%s)' % \
-          (self.groupInfo.name, self.groupInfo.id, 
+          (self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            self.admin.name, self.admin.id)
         log.info(m)
@@ -330,11 +327,11 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         else:
             mailingList.manage_addProperty('subscribe', val, 'string')
         
-        assert mailingList.getProperty('subscribe') == val,\
+        assert mailingList.getProperty('subscribe') == val, \
           'Subscribe property of the mailing list not set'
 
         m = u'Set the subscribe property of the mailing-list %s (%s) to '\
-          u'"%s" for the administrator %s (%s)'%\
+          u'"%s" for the administrator %s (%s)' % \
           (self.groupInfo.name, self.groupInfo.id, val,
            self.admin.name, self.admin.id)
         log.info(m)
@@ -346,12 +343,12 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         else:
             grp.manage_addProperty('join_condition', val, 'string')
 
-        assert grp.getProperty('join_condition') == val,\
+        assert grp.getProperty('join_condition') == val, \
           'Join condition of the group not set'
           
         m = u'Set the join condition of the group %s (%s) on %s (%s) to '\
-          u'"%s" for the administrator %s (%s)'%\
-          (self.groupInfo.name, self.groupInfo.id, 
+          u'"%s" for the administrator %s (%s)' % \
+          (self.groupInfo.name, self.groupInfo.id,
            self.siteInfo.name, self.siteInfo.id,
            val,
            self.admin.name, self.admin.id)

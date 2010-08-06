@@ -3,7 +3,7 @@ from zope.component import adapts, createObject
 from zope.app.folder.interfaces import IFolder
 from zope.component.interfaces import IFactory
 
-from interfaces import IGSGroupInfo, IGSMailingListInfo
+from interfaces import IGSMailingListInfo
 from Products.GSGroupMember.groupmembership import GroupMembers, \
   user_admin_of_group, user_participation_coach_of_group
 
@@ -14,7 +14,6 @@ class GSMailingListInfoFactory(object):
     descripton = u'Create a new GroupServer Mailing List Information instance'
     
     def __call__(self, context, groupId=None):
-        retval = None
         retval = GSMailingListInfo(context, groupId)
         return retval
         
@@ -35,13 +34,13 @@ class GSMailingListInfoFactory(object):
         return retval
 
 class GSMailingListInfo(object):
-    implements( IGSMailingListInfo )
-    adapts( IFolder )
+    implements(IGSMailingListInfo)
+    adapts(IFolder)
     
     def __init__(self, context, groupId=None):
         self.context = context
         self.groupId = groupId
-        self.groupInfo = createObject('groupserver.GroupInfo', 
+        self.groupInfo = createObject('groupserver.GroupInfo',
                             self.context, groupId)
         self.groupObj = self.groupInfo.groupObj
         assert self.groupObj, 'No group. Blame Zope.'
@@ -56,13 +55,10 @@ class GSMailingListInfo(object):
         return retval
 
     def __get_mailing_list_by_id(self, groupId):
-        retval = None
-        
         site_root = self.context.site_root()
         mailingListManager = getattr(site_root, 'ListManager')
         assert mailingListManager, 'No MailingListManager found.'
         retval = mailingListManager.get_list(groupId)
-
         return retval
         
     @property
@@ -90,7 +86,7 @@ class GSMailingListInfo(object):
             retval = [ createObject('groupserver.UserFromId', \
                         self.context, uid) for uid in \
                           self.get_mlist_property('moderator_members', []) ]
-        assert type(retval)==list
+        assert type(retval) == list
         return retval
 
     @property
@@ -124,7 +120,7 @@ class GSMailingListInfo(object):
                               self.groupInfo) and \
                            (u not in self.moderators) and \
                            (u not in self.blocked_members))) ]
-        assert type(retval)==list
+        assert type(retval) == list
         return retval
 
     @property
@@ -138,7 +134,7 @@ class GSMailingListInfo(object):
         retval = [ createObject('groupserver.UserFromId', \
                     self.context, uid) for uid in \
                       self.get_mlist_property('blocked_members', []) ]
-        assert type(retval)==list
+        assert type(retval) == list
         return retval
 
     @property
@@ -158,7 +154,7 @@ class GSMailingListInfo(object):
                           postingIds ]
         else:
             retval = GroupMembers(self.groupObj).members
-        assert type(retval)==list
+        assert type(retval) == list
         return retval
 
     def get_property(self, prop, default=None):
