@@ -5,18 +5,16 @@ try:
     from Products.Five.formlib.formbase import PageForm
 except ImportError:
     from five.formlib.formbase import PageForm
-
 from zope.component import createObject
 from zope.formlib import form
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 from zope.app.form.browser import RadioWidget
 from zope.app.form.browser.widget import renderElement
-
-from interfacesprivacy import IGSGroupBasicPrivacySettings
-from Products.GSGroup.joining import GSGroupJoining
+from Products.XWFCore.XWFUtils import get_the_actual_instance_from_zope
 from Products.XWFMailingListManager.postContentProvider import \
   GSPostContentProvider
-
+from interfacesprivacy import IGSGroupBasicPrivacySettings
+from joining import GSGroupJoining
 from utils import PERM_ANN, PERM_GRP, get_visibility, clear_visibility_cache
 
 import logging
@@ -103,8 +101,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
     @property
     def groupsInfo(self):
         if self.__groupsInfo == None:
+            ctx = get_the_actual_instance_from_zope(self.context)
             self.__groupsInfo = createObject('groupserver.GroupsInfo', 
-                                    self.context)
+                                    ctx)
         assert self.__groupsInfo != None
         return self.__groupsInfo
 
