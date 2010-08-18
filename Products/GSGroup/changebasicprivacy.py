@@ -90,7 +90,15 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
             request.form['form.basicPrivacy'] = self.group_visibility(grp)
         self.form_fields['basicPrivacy'].custom_widget = radio_widget
 
-        self.__admin = None
+        self.__admin = self.__groupsInfo = None
+
+    @property
+    def groupsInfo(self):
+        if self.__groupsInfo == None:
+            self.__groupsInfo = createObject('groupserver.GroupsInfo', 
+                                    self.context)
+        assert self.__groupsInfo != None
+        return self.__groupsInfo
 
     @form.action(label=u'Change', failure='handle_change_action_failure')
     def handle_change(self, action, data):
