@@ -58,8 +58,6 @@ def radio_widget(field, request):
                                 request)
 
 class GSGroupChangeBasicPrivacyForm(PageForm):
-    form_fields = form.Fields(IGSGroupBasicPrivacySettings,
-      render_context=False)
     label = u'Change Group Privacy'
     pageTemplateFileName = 'browser/templates/change_basic_privacy.pt'
     template = ZopeTwoPageTemplateFile(pageTemplateFileName)
@@ -83,14 +81,24 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.siteInfo = createObject('groupserver.SiteInfo', context)
         groupInfo = self.groupInfo = \
           createObject('groupserver.GroupInfo', context)
+        self.__admin = self.__groupsInfo = self.__formFields = None
 
-        # Look, a hack!
-        grp = groupInfo.groupObj
-        if not(request.form.get('form.basicPrivacy', None)):
-            request.form['form.basicPrivacy'] = self.group_visibility(grp)
-        self.form_fields['basicPrivacy'].custom_widget = radio_widget
+    def setUpWidgets(self, ignore_request=False):
+        data = {'basicPrivacy': self.group_visibility()}
+        self.widgets = form.setUpWidgets(
+            self.form_fields, self.prefix, self.context,
+            self.request, form=self, data=data,
+            ignore_request=ignore_request)
 
-        self.__admin = self.__groupsInfo = None
+    @property
+    def form_fields(self):
+        if self.__formFields == None:
+            self.__formFields = form.Fields(IGSGroupBasicPrivacySettings,
+                                  render_context=False)
+            self.__formFields['basicPrivacy'].custom_widget = \
+                radio_widget
+        assert self.__formFields != None
+        return self.__formFields
 
     @property
     def groupsInfo(self):
@@ -109,7 +117,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
           u'to "%s" for the administrator %s (%s)' % \
            (self.groupInfo.name, self.groupInfo.id,
             self.siteInfo.name, self.siteInfo.id,
-            self.group_visibility(self.groupInfo.groupObj),
+            self.group_visibility(),
             data['basicPrivacy'],
             self.admin.name, self.admin.id)
         log.info(m)
@@ -131,9 +139,9 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         else:
             self.status = u'<p>There are errors:</p>'
 
-    def group_visibility(self, grp):
+    def group_visibility(self):
         # TODO: Move to a utility
-        assert grp
+        grp = self.groupInfo.groupObj
         msgs = getattr(grp, 'messages', None)
         msgsVis = get_visibility(msgs)
         files = getattr(grp, 'files', None)
@@ -186,7 +194,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.set_files_visibility(self.everyone)
         self.set_joinability_anyone()
 
-        vis = self.group_visibility(self.groupInfo.groupObj)
+        vis = self.group_visibility()
         assert vis == 'public', 'Visibility of %s (%s) is %s, not public' % \
           (self.groupInfo.name, self.groupInfo.id, vis)
 
@@ -203,7 +211,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.set_files_visibility(self.group)
         self.set_joinability_request()
 
-        vis = self.group_visibility(self.groupInfo.groupObj)
+        vis = self.group_visibility()
         assert vis == 'private', 'Visibility of %s (%s) is %s, not private' % \
           (self.groupInfo.name, self.groupInfo.id, vis)
 
@@ -221,7 +229,7 @@ class GSGroupChangeBasicPrivacyForm(PageForm):
         self.set_files_visibility(self.group)
         self.set_joinability_invite()
         
-        vis = self.group_visibility(self.groupInfo.groupObj)
+        vis = self.group_visibility()
         assert vis == 'secret', 'Visibility of %s (%s) is %s, not secret' % \
           (self.groupInfo.name, self.groupInfo.id, vis)
 
