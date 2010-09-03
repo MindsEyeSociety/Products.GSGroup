@@ -83,9 +83,11 @@ class GSMailingListInfo(object):
         """
         retval = []
         if self.is_moderated:
+            memberIds = [ m.id for m in GroupMembers(self.groupObj).members ]
             retval = [ createObject('groupserver.UserFromId', \
                         self.context, uid) for uid in \
-                          self.get_mlist_property('moderator_members', []) ]
+                          self.get_mlist_property('moderator_members', [])
+                       if uid in memberIds ]
         assert type(retval) == list
         return retval
 
@@ -107,12 +109,13 @@ class GSMailingListInfo(object):
         retval = []
         if self.is_moderated:
             moderated_ids = self.get_mlist_property('moderated_members', [])
+            group_members = GroupMembers(self.groupObj).members
             if moderated_ids:
+                memberIds = [ m.id for m in group_members ]
                 retval = [ createObject('groupserver.UserFromId', \
                             self.context, uid) for uid in \
-                              moderated_ids ]
+                              moderated_ids if uid in memberIds ]
             elif not(self.is_moderate_new):
-                group_members = GroupMembers(self.groupObj).members
                 retval = [ u for u in group_members if \
                           (not(user_admin_of_group(u, \
                               self.groupInfo)) and \
@@ -148,12 +151,14 @@ class GSMailingListInfo(object):
         assumed to be posting members.
         """
         postingIds = self.get_mlist_property('posting_members', [])
+        group_members = GroupMembers(self.groupObj).members
         if postingIds:
+            memberIds = [ m.id for m in group_members ]
             retval = [ createObject('groupserver.UserFromId', \
                         self.context, uid) for uid in \
-                          postingIds ]
+                          postingIds if uid in memberIds ]
         else:
-            retval = GroupMembers(self.groupObj).members
+            retval = group_members
         assert type(retval) == list
         return retval
 
