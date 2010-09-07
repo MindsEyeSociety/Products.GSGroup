@@ -4,7 +4,6 @@ from zope.app.folder.interfaces import IFolder
 from interfaces import IGSGroupInfo
 from zope.component.interfaces import IFactory
 from gs.groups.interfaces import IGSGroupsInfo
-from Products.XWFCore.XWFUtils import get_the_actual_instance_from_zope
 
 class GSGroupInfoFactory(object):
     implements(IFactory)
@@ -38,10 +37,9 @@ class GSGroupInfo(object):
     adapts(IFolder)
     
     def __init__(self, context, groupId=None):
-        ctx = get_the_actual_instance_from_zope(context)
-        self.context = ctx
+        self.context = context
         self.groupId = groupId
-        self.siteInfo = createObject('groupserver.SiteInfo', ctx)
+        self.siteInfo = createObject('groupserver.SiteInfo', context)
         self.groupObj = self.__get_group_object()
 
     def __get_group_object(self):
