@@ -2,10 +2,10 @@ from zope.interface import implements, implementedBy
 from zope.component import adapts, createObject
 from zope.app.folder.interfaces import IFolder
 from zope.component.interfaces import IFactory
-
-from interfaces import IGSMailingListInfo
+from Products.XWFCore.XWFUtils import sort_by_name
 from Products.GSGroupMember.groupmembership import GroupMembers, \
   user_admin_of_group, user_participation_coach_of_group
+from interfaces import IGSMailingListInfo
 
 class GSMailingListInfoFactory(object):
     implements(IFactory)
@@ -81,15 +81,16 @@ class GSMailingListInfo(object):
         The userIds of all moderators are assumed to be stored in a property 
         called 'moderator_members' of type 'lines'.
         """
-        retval = []
+        members = []
         if self.is_moderated:
             memberIds = [ m.id for m in GroupMembers(self.groupObj).members ]
-            retval = [ createObject('groupserver.UserFromId', \
-                        self.context, uid) for uid in \
-                          self.get_mlist_property('moderator_members', [])
-                       if uid in memberIds ]
-        assert type(retval) == list
-        return retval
+            members = \
+              [ createObject('groupserver.UserFromId', self.context, uid) 
+                for uid in self.get_mlist_property('moderator_members', [])
+                if uid in memberIds ]
+            members.sort(sort_by_name)
+        assert type(members) == list
+        return members
 
     @property
     def moderatees(self):
@@ -106,25 +107,24 @@ class GSMailingListInfo(object):
            - If so, then it is assumed that *no members* are being moderated. 
            - If not, then it is assumed that *all normal members* are moderated.
         """
-        retval = []
+        members = []
         if self.is_moderated:
             moderated_ids = self.get_mlist_property('moderated_members', [])
             group_members = GroupMembers(self.groupObj).members
             if moderated_ids:
                 memberIds = [ m.id for m in group_members ]
-                retval = [ createObject('groupserver.UserFromId', \
-                            self.context, uid) for uid in \
-                              moderated_ids if uid in memberIds ]
+                members = \
+                  [ createObject('groupserver.UserFromId', self.context, uid) 
+                    for uid in moderated_ids if uid in memberIds ]
             elif not(self.is_moderate_new):
-                retval = [ u for u in group_members if \
-                          (not(user_admin_of_group(u, \
-                              self.groupInfo)) and \
-                           not(user_participation_coach_of_group(u, \
-                              self.groupInfo) and \
-                           (u not in self.moderators) and \
-                           (u not in self.blocked_members))) ]
-        assert type(retval) == list
-        return retval
+                members = \
+                  [ u for u in group_members 
+                    if (not(user_admin_of_group(u, self.groupInfo)) 
+                    and not(user_participation_coach_of_group(u, self.groupInfo) 
+                    and (u not in self.moderators) and (u not in self.blocked_members))) ]
+            members.sort(sort_by_name)
+        assert type(members) == list
+        return members
 
     @property
     def blocked_members(self):
@@ -134,11 +134,12 @@ class GSMailingListInfo(object):
         The userIds of all blocked members are assumed to be stored in a 
         property called 'blocked_members' of type 'lines'.
         """
-        retval = [ createObject('groupserver.UserFromId', \
-                    self.context, uid) for uid in \
-                      self.get_mlist_property('blocked_members', []) ]
-        assert type(retval) == list
-        return retval
+        members = \
+          [ createObject('groupserver.UserFromId', self.context, uid) 
+            for uid in self.get_mlist_property('blocked_members', []) ]
+        members.sort(sort_by_name)
+        assert type(members) == list
+        return members
 
     @property
     def posting_members(self):
@@ -152,15 +153,15 @@ class GSMailingListInfo(object):
         """
         postingIds = self.get_mlist_property('posting_members', [])
         group_members = GroupMembers(self.groupObj).members
+        members = group_members
         if postingIds:
             memberIds = [ m.id for m in group_members ]
-            retval = [ createObject('groupserver.UserFromId', \
-                        self.context, uid) for uid in \
-                          postingIds if uid in memberIds ]
-        else:
-            retval = group_members
-        assert type(retval) == list
-        return retval
+            members = \
+              [ createObject('groupserver.UserFromId', self.context, uid) 
+                for uid in postingIds if uid in memberIds ]
+        members.sort(sort_by_name)
+        assert type(members) == list
+        return members
 
     def get_property(self, prop, default=None):
         return self.get_mlist_property(prop, default=None)
