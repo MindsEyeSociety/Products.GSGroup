@@ -50,11 +50,6 @@
   <include files="*-group.zcml" />
   
   <interface interface=".interfaces.IGSGroupBasicPrivacySettings" />
-  <browser:page 
-    for="Products.XWFChat.interfaces.IGSGroupFolder"
-    name="admin_change_basic_privacy.html"
-    class=".changebasicprivacy.GSGroupChangeBasicPrivacyForm"
-    permission="zope2.ManageProperties"/>
 
   <!-- Factories -->
   <utility factory=".groupInfo.GSGroupInfoFactory"
