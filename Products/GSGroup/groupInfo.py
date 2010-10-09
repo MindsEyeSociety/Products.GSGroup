@@ -162,9 +162,10 @@ class GSGroupInfo(object):
     def group_admins(self):
         return self.get_group_admins()
     def get_group_admins(self):
-        admins = self.groupObj.users_with_local_role('GroupAdmin')
-        retval = [ createObject('groupserver.UserFromId',
-                      self.context, a) for a in admins ]
+        adminIds = self.groupObj.users_with_local_role('GroupAdmin')
+        admins = [ createObject('groupserver.UserFromId',
+                      self.context, a) for a in adminIds ]
+        retval = [ a for a in admins if not a.anonymous ]
         return retval
 
     @property
