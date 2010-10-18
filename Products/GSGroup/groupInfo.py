@@ -5,6 +5,9 @@ from interfaces import IGSGroupInfo
 from zope.component.interfaces import IFactory
 from gs.groups.interfaces import IGSGroupsInfo
 
+import logging
+log = logging.getLogger('GSGroupInfo')
+
 class GSGroupInfoFactory(object):
     implements(IFactory)
     
@@ -162,7 +165,20 @@ class GSGroupInfo(object):
     def group_admins(self):
         return self.get_group_admins()
     def get_group_admins(self):
+        aclUsers = getattr(self.groupObj, 'acl_users')
         adminIds = self.groupObj.users_with_local_role('GroupAdmin')
+        for aId in adminIds:
+            user = aclUsers.getUser(aId)
+            if not user:
+                adminIds.remove(aId)
+                m = u'The user ID %s is specified as having the'\
+                  u'local role GroupAdmin in the group %s (%s) '\
+                  u'on the site %s (%s), but no user with that '\
+                  u'ID exists.' % (aId, self.name, self.id, 
+                    self.siteInfo.name, self.siteInfo.id)
+                m.encode('ascii','ignore')
+                log.warn(m)
+
         admins = [ createObject('groupserver.UserFromId',
                       self.context, a) for a in adminIds ]
         retval = [ a for a in admins if not a.anonymous ]
