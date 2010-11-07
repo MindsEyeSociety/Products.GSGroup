@@ -115,14 +115,20 @@ class GSGroupInfo(object):
     @property
     def url(self):
         return self.get_url()
+
     def get_url(self):
         assert(self.group_exists()), 'Group "%s" does not exist' % self.id
         retval = '%s/groups/%s' % (self.siteInfo.url, self.id)
         return retval
+
+    def relative_url(self):
+        retval = '/groups/%s' % self.id
+        return retval        
         
     @property
     def group_type(self):
         return self.get_group_type()
+
     def get_group_type(self):
         """ AM: A more robust method of identifying the group type will
               replace this once we have interfaces for the various
