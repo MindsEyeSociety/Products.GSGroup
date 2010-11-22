@@ -118,12 +118,14 @@ class GSGroupInfo(object):
     @property
     def url(self):
         return self.get_url()
-
     def get_url(self):
         assert(self.group_exists()), 'Group "%s" does not exist' % self.id
         retval = '%s/groups/%s' % (self.siteInfo.url, self.id)
         return retval
 
+    @property
+    def relativeURL(self):
+        return self.relative_url()
     def relative_url(self):
         retval = '/groups/%s' % self.id
         return retval        
