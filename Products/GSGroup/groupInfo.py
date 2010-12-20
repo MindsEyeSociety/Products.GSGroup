@@ -6,7 +6,10 @@ from zope.component.interfaces import IFactory
 from gs.groups.interfaces import IGSGroupsInfo
 
 import logging
+from Products.GSGroup.joining import GSGroupJoining
 log = logging.getLogger('GSGroupInfo')
+
+from Products.GSGroupMember.groupMembersInfo import GSGroupMembersInfo
 
 class GSGroupInfoFactory(object):
     implements(IFactory)
@@ -44,7 +47,7 @@ class GSGroupInfo(object):
         self.groupId = groupId
         self.siteInfo = createObject('groupserver.SiteInfo', context)
         self.groupObj = self.__get_group_object()
-
+        
     def __get_group_object(self):
         if self.groupId:
             retval = self.__get_group_object_by_id(self.groupId)
@@ -109,12 +112,24 @@ class GSGroupInfo(object):
     @property
     def name(self):
         return self.get_name()
+
     def get_name(self):
         retval = ''
         if self.group_exists():
             retval = self.groupObj.title_or_id()
         return retval
 
+    @property
+    def description(self):
+        return self.get_description()
+    
+    def get_description(self):
+        retval = ''
+        if self.group_exists():
+            retval = self.groupObj.getProperty('description', u'')
+        
+        return retval
+    
     @property
     def url(self):
         return self.get_url()
@@ -193,6 +208,37 @@ class GSGroupInfo(object):
         return retval
 
     @property
+    def group_stats(self):
+        # importing here to workaround a weird import order problem
+        from Products.GSParticipationStats.groupstatscontentprovider import \
+             GroupPostingStats
+        
+        try:
+            groupStats = None
+            if hasattr(self, '_group_stats'):
+                groupStats = self._group_stats
+            else:
+                groupStats = GroupPostingStats(self)
+                groupStats.update()
+                self._group_stats = groupStats 
+        except:
+            log.exception('group_stats')
+        return groupStats
+ 
+    @property
+    def group_members_info(self):
+        try:
+            groupMembersInfo = None
+            if hasattr(self, '_group_member_info'):
+                groupMembersInfo = self._group_member_info
+            else:
+                groupMembersInfo = GSGroupMembersInfo(self.groupObj)
+                self._group_members_info = groupMembersInfo 
+        except:
+            log.exception('group_members_info')
+        return groupMembersInfo
+
+    @property
     def site_admins(self):
         return self.siteInfo.site_admins
 
@@ -200,6 +246,10 @@ class GSGroupInfo(object):
         assert self.groupObj, 'Group instance does not exist\n'\
           'Context %s\nID %s' % (self.context, self.groupId)
         return self.groupObj.getProperty(prop, default)
+
+    @property
+    def joinability(self):
+        return GSGroupJoining(self.groupObj).joinability
 
 def groupInfo_to_anchor(groupInfo):
     assert groupInfo

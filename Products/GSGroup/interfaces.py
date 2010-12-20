@@ -187,7 +187,7 @@ class IGSGroupAdmistrationInfo(Interface):
       description=u'All users that have the group administrator role',
       readonly=True)
       
-    def administrator(user):
+    def administrator(user): #@NoSelf
         """Can the user administer the group?
         
         ARGUMENTS
@@ -201,7 +201,7 @@ class IGSGroupAdmistrationInfo(Interface):
           None
         """
 
-    def group_administrator(user):
+    def group_administrator(user): #@NoSelf
         """Is the user a group administrator?
         
         ARGUMENTS
@@ -214,7 +214,7 @@ class IGSGroupAdmistrationInfo(Interface):
           None
         """
 
-    def status(user):
+    def status(user): #@NoSelf
         """Administration status of the user.
         
         ARGUMENTS
