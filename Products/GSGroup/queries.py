@@ -1,22 +1,21 @@
 # coding=utf-8
-import sqlalchemy as sa
+from gs.database import getTable, getSession
 
 class GroupQuery(object):
-
-    def __init__(self, context, da):
+    def __init__(self, context):
         self.context = context
-        self.postTable = da.createTable('post')
+        self.postTable = getTable('post')
         
     def authors_posts_in_group(self, siteId, groupId):
         pt = self.postTable
         cols = [pt.c.user_id.distinct(),
                 sa.func.count(pt.c.user_id).label('num_posts')]
-        statement = sa.select(cols)
+        statement = sa.select(cols, group_by=pt.c.user_id)
         statement.append_whereclause(pt.c.site_id == siteId)
         statement.append_whereclause(pt.c.group_id == groupId)
-        statement.group_by(pt.c.user_id)
-
-        r = statement.execute()
+        
+        session = getSession()
+        r = session.execute(statement)
         retval = []
         if r.rowcount:
             for row in r:
