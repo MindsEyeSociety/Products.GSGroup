@@ -1,5 +1,6 @@
 # coding=utf-8
 from gs.database import getTable, getSession
+import sqlalchemy as sa
 
 class GroupQuery(object):
     def __init__(self, context):
