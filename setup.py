@@ -25,8 +25,18 @@ setup(name='Products.GSGroup',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'pytz',
+          'sqlalchemy',
+          'AccessControl',
+          'zope.app.folder',
+          'zope.component',
+          'zope.interface',
+          'zope.schema',          
           'gs.cache',
           'gs.database',
+          'Products.CustomUserFolder',
+          'Products.GSGroupMember', # Eh?
+          'Products.XWFCore',
           # -*- Extra requirements: -*-
       ],
       entry_points="""
