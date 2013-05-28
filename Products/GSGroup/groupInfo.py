@@ -127,7 +127,8 @@ class GSGroupInfo(object):
         retval = ''
         if self.group_exists():
             retval = self.groupObj.getProperty('description', u'')
-        
+            if (type(retval) == unicode):
+                retval = retval.encode('ascii', 'replace')
         return retval
     
     @property
