@@ -1,31 +1,33 @@
-from zope.interface import implements, implementedBy
-from zope.component import adapts, createObject
+# -*- coding: utf-8 -*-
 from zope.app.folder.interfaces import IFolder
-from interfaces import IGSGroupInfo
+from zope.cachedescriptors.property import Lazy
 from zope.component.interfaces import IFactory
+from zope.component import adapts, createObject
+from zope.interface import implements, implementedBy
+from Products.GSGroupMember.groupMembersInfo import GSGroupMembersInfo
 from gs.groups.interfaces import IGSGroupsInfo
+from interfaces import IGSGroupInfo
 
 import logging
 from Products.GSGroup.joining import GSGroupJoining
 log = logging.getLogger('GSGroupInfo')
 
-from Products.GSGroupMember.groupMembersInfo import GSGroupMembersInfo
 
 class GSGroupInfoFactory(object):
     implements(IFactory)
-    
+
     title = u'GroupServer Group Info Factory'
     descripton = u'Create a new GroupServer group information instance'
-    
+
     def __call__(self, context, groupId=None):
         retval = GSGroupInfo(context, groupId)
         return retval
-        
+
     def getInterfaces(self):
         retval = implementedBy(GSGroupInfo)
         assert retval
         return retval
-        
+
     #########################################
     # Non-Standard methods below this point #
     #########################################
@@ -38,47 +40,52 @@ class GSGroupInfoFactory(object):
         assert retval
         return retval
 
+
 class GSGroupInfo(object):
     implements(IGSGroupInfo)
     adapts(IFolder)
-    
+
     def __init__(self, context, groupId=None):
         self.context = context
         self.groupId = groupId
-        self.siteInfo = createObject('groupserver.SiteInfo', context)
-        self.groupObj = self.__get_group_object()
-        
-    def __get_group_object(self):
+
+    @Lazy
+    def siteInfo(self):
+        retval = createObject('groupserver.SiteInfo', self.context)
+        return retval
+
+    @Lazy
+    def groupObj(self):
         if self.groupId:
             retval = self.__get_group_object_by_id(self.groupId)
         else:
             retval = self.__get_group_object_by_acquisition()
         return retval
-        
+
     def __get_group_object_by_id(self, groupId):
         retval = None
         site_root = self.context.site_root()
         content = getattr(site_root, 'Content')
-        site = getattr(content, self.siteInfo.get_id())
+        site = getattr(content, self.siteInfo.id)
         groups = getattr(site, 'groups')
         if hasattr(groups, groupId):
             retval = getattr(groups, groupId)
         return retval
-        
+
     def __get_group_object_by_acquisition(self):
         """Get the group object by acquisition
-        
+
         Walk back up the location-hierarchy looking for the group object,
         which is marked by the "is_group" attribute (set to True). For the
-        most part, the code was taken from 
+        most part, the code was taken from
           "GroupServer/Scripts/get/group_object.py"
-        
+
         Returns
-          None, if no group can be found, or the Folder object if a 
+          None, if no group can be found, or the Folder object if a
           group is found.
         """
         retval = None
-        
+
         group_object = self.context
         if getattr(group_object.aq_inner.aq_explicit, 'is_group', False):
             retval = group_object
@@ -86,7 +93,8 @@ class GSGroupInfo(object):
             while group_object:
                 try:
                     group_object = group_object.aq_parent
-                    if getattr(group_object.aq_inner.aq_explicit, 'is_group', False):
+                    g = group_object.aq_inner.aq_explicit
+                    if getattr(g, 'is_group', False):
                         break
                 except:
                     break
@@ -96,19 +104,20 @@ class GSGroupInfo(object):
         except:
             pass
         return retval
-        
+
     def group_exists(self):
-        return (self.groupObj != None)
+        return (self.groupObj is not None)
 
     @property
     def id(self):
         return self.get_id()
+
     def get_id(self):
         retval = ''
         if self.group_exists():
             retval = self.groupObj.getId()
         return retval
-        
+
     @property
     def name(self):
         return self.get_name()
@@ -122,7 +131,7 @@ class GSGroupInfo(object):
     @property
     def description(self):
         return self.get_description()
-    
+
     def get_description(self):
         retval = ''
         if self.group_exists():
@@ -130,10 +139,11 @@ class GSGroupInfo(object):
             if (type(retval) == unicode):
                 retval = retval.encode('ascii', 'replace')
         return retval
-    
+
     @property
     def url(self):
         return self.get_url()
+
     def get_url(self):
         assert(self.group_exists()), 'Group "%s" does not exist' % self.id
         retval = '%s/groups/%s' % (self.siteInfo.url, self.id)
@@ -142,10 +152,11 @@ class GSGroupInfo(object):
     @property
     def relativeURL(self):
         return self.relative_url()
+
     def relative_url(self):
         retval = '/groups/%s' % self.id
-        return retval        
-        
+        return retval
+
     @property
     def group_type(self):
         return self.get_group_type()
@@ -153,7 +164,7 @@ class GSGroupInfo(object):
     def get_group_type(self):
         """ AM: A more robust method of identifying the group type will
               replace this once we have interfaces for the various
-              group types. For now, horrible as it is, this method 
+              group types. For now, horrible as it is, this method
               reflects how we currently identify the group type.
         """
         retval = ''
@@ -176,6 +187,7 @@ class GSGroupInfo(object):
     @property
     def ptn_coach(self):
         return self.get_ptn_coach()
+
     def get_ptn_coach(self):
         retval = None
         if self.group_exists():
@@ -184,10 +196,11 @@ class GSGroupInfo(object):
                 retval = createObject('groupserver.UserFromId', self.context,
                                       ptnCoachId)
         return retval
-      
+
     @property
     def group_admins(self):
         return self.get_group_admins()
+
     def get_group_admins(self):
         aclUsers = getattr(self.groupObj, 'acl_users')
         adminIds = self.groupObj.users_with_local_role('GroupAdmin')
@@ -198,14 +211,14 @@ class GSGroupInfo(object):
                 m = u'The user ID %s is specified as having the'\
                   u'local role GroupAdmin in the group %s (%s) '\
                   u'on the site %s (%s), but no user with that '\
-                  u'ID exists.' % (aId, self.name, self.id, 
+                  u'ID exists.' % (aId, self.name, self.id,
                     self.siteInfo.name, self.siteInfo.id)
-                m.encode('ascii','ignore')
+                m.encode('ascii', 'ignore')
                 log.warn(m)
 
-        admins = [ createObject('groupserver.UserFromId',
-                      self.context, a) for a in adminIds ]
-        retval = [ a for a in admins if not a.anonymous ]
+        admins = [createObject('groupserver.UserFromId',
+                      self.context, a) for a in adminIds]
+        retval = [a for a in admins if not a.anonymous]
         return retval
 
     @property
@@ -213,7 +226,7 @@ class GSGroupInfo(object):
         # importing here to workaround a weird import order problem
         from Products.GSParticipationStats.groupstatscontentprovider import \
              GroupPostingStats
-        
+
         try:
             groupStats = None
             if hasattr(self, '_group_stats'):
@@ -221,11 +234,11 @@ class GSGroupInfo(object):
             else:
                 groupStats = GroupPostingStats(self)
                 groupStats.update()
-                self._group_stats = groupStats 
+                self._group_stats = groupStats
         except:
             log.exception('group_stats')
         return groupStats
- 
+
     @property
     def group_members_info(self):
         try:
@@ -234,7 +247,7 @@ class GSGroupInfo(object):
                 groupMembersInfo = self._group_member_info
             else:
                 groupMembersInfo = GSGroupMembersInfo(self.groupObj)
-                self._group_members_info = groupMembersInfo 
+                self._group_members_info = groupMembersInfo
         except:
             log.exception('group_members_info')
         return groupMembersInfo
@@ -252,6 +265,7 @@ class GSGroupInfo(object):
     def joinability(self):
         return GSGroupJoining(self.groupObj).joinability
 
+
 def groupInfo_to_anchor(groupInfo):
     assert groupInfo
     assert isinstance(groupInfo, GSGroupInfo), \
@@ -261,4 +275,3 @@ def groupInfo_to_anchor(groupInfo):
     assert retval
     assert type(retval) == unicode
     return retval
-
