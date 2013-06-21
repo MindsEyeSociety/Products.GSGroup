@@ -7,9 +7,9 @@ from zope.interface import implements, implementedBy
 from Products.GSGroupMember.groupMembersInfo import GSGroupMembersInfo
 from gs.groups.interfaces import IGSGroupsInfo
 from interfaces import IGSGroupInfo
+from joining import GSGroupJoining
 
 import logging
-from Products.GSGroup.joining import GSGroupJoining
 log = logging.getLogger('GSGroupInfo')
 
 
@@ -108,7 +108,7 @@ class GSGroupInfo(object):
     def group_exists(self):
         return (self.groupObj is not None)
 
-    @property
+    @Lazy
     def id(self):
         return self.get_id()
 
@@ -118,7 +118,7 @@ class GSGroupInfo(object):
             retval = self.groupObj.getId()
         return retval
 
-    @property
+    @Lazy
     def name(self):
         return self.get_name()
 
@@ -128,7 +128,7 @@ class GSGroupInfo(object):
             retval = self.groupObj.title_or_id()
         return retval
 
-    @property
+    @Lazy
     def description(self):
         return self.get_description()
 
@@ -140,7 +140,7 @@ class GSGroupInfo(object):
                 retval = retval.encode('ascii', 'replace')
         return retval
 
-    @property
+    @Lazy
     def url(self):
         return self.get_url()
 
@@ -149,7 +149,7 @@ class GSGroupInfo(object):
         retval = '%s/groups/%s' % (self.siteInfo.url, self.id)
         return retval
 
-    @property
+    @Lazy
     def relativeURL(self):
         return self.relative_url()
 
@@ -157,7 +157,7 @@ class GSGroupInfo(object):
         retval = '/groups/%s' % self.id
         return retval
 
-    @property
+    @Lazy
     def group_type(self):
         return self.get_group_type()
 
