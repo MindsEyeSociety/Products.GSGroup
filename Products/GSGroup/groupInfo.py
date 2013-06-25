@@ -4,7 +4,6 @@ from zope.cachedescriptors.property import Lazy
 from zope.component.interfaces import IFactory
 from zope.component import adapts, createObject
 from zope.interface import implements, implementedBy
-from Products.GSGroupMember.groupMembersInfo import GSGroupMembersInfo
 from gs.groups.interfaces import IGSGroupsInfo
 from interfaces import IGSGroupInfo
 from joining import GSGroupJoining
@@ -238,19 +237,6 @@ class GSGroupInfo(object):
         except:
             log.exception('group_stats')
         return groupStats
-
-    @property
-    def group_members_info(self):
-        try:
-            groupMembersInfo = None
-            if hasattr(self, '_group_member_info'):
-                groupMembersInfo = self._group_member_info
-            else:
-                groupMembersInfo = GSGroupMembersInfo(self.groupObj)
-                self._group_members_info = groupMembersInfo
-        except:
-            log.exception('group_members_info')
-        return groupMembersInfo
 
     @property
     def site_admins(self):

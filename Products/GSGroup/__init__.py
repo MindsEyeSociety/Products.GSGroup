@@ -1,5 +1,4 @@
 # This space intentionally left blank
-import groupInfo
 from AccessControl import ModuleSecurityInfo
 from AccessControl import allow_class
 
