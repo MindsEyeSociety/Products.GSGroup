@@ -222,6 +222,7 @@ class GSGroupInfo(object):
 
     @property
     def group_stats(self):
+        # FIXME: OMG WTF DELETE ME
         # importing here to workaround a weird import order problem
         from Products.GSParticipationStats.groupstatscontentprovider import \
              GroupPostingStats
