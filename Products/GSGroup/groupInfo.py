@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+from logging import getLogger
+log = getLogger('Products.GSGroup.groupinfo')
 from zope.app.folder.interfaces import IFolder
 from zope.cachedescriptors.property import Lazy
 from zope.component.interfaces import IFactory
 from zope.component import adapts, createObject
 from zope.interface import implements, implementedBy
+from gs.core import to_ascii
 from gs.groups.interfaces import IGSGroupsInfo
-from interfaces import IGSGroupInfo
-from joining import GSGroupJoining
-
-import logging
-log = logging.getLogger('GSGroupInfo')
+from .interfaces import IGSGroupInfo
+from .joining import GSGroupJoining
 
 
 class GSGroupInfoFactory(object):
     implements(IFactory)
 
-    title = u'GroupServer Group Info Factory'
-    descripton = u'Create a new GroupServer group information instance'
+    title = 'GroupServer Group Info Factory'
+    descripton = 'Create a new GroupServer group information instance'
 
     def __call__(self, context, groupId=None):
         retval = GSGroupInfo(context, groupId)
@@ -32,10 +33,21 @@ class GSGroupInfoFactory(object):
     #########################################
 
     def __get_group_object_by_id(self, context, groupId):
+        if not isinstance(groupId, basestring):
+            m = 'groupID ("{0}") is not a string'.format(groupId)
+            raise TypeError(m)
+
         groupsInfo = IGSGroupsInfo(context)
-        assert hasattr(groupsInfo.groupsObj, groupId), \
-          '%s does not exist in %s' % (groupId, context)
-        retval = getattr(groupsInfo.groupsObj, groupId)
+        # Converting to ASCII to work around the following issue:
+        #   TypeError: getattr(): attribute name must be string
+        gid = to_ascii(groupId)
+
+        if not hasattr(groupsInfo.groupsObj, gid):
+            m = '{0} ("{1}") does not exist in {2}'
+            msg = m.format(gid, groupId, context)
+            raise ValueError(msg)
+
+        retval = getattr(groupsInfo.groupsObj, gid)
         assert retval
         return retval
 
@@ -132,11 +144,10 @@ class GSGroupInfo(object):
         return self.get_description()
 
     def get_description(self):
-        retval = ''
+        desc = ''
         if self.group_exists():
-            retval = self.groupObj.getProperty('description', u'')
-            if (type(retval) == unicode):
-                retval = retval.encode('ascii', 'replace')
+            desc = self.groupObj.getProperty('description', '')
+        retval = to_ascii(desc)
         return retval
 
     @Lazy
@@ -207,13 +218,12 @@ class GSGroupInfo(object):
             user = aclUsers.getUser(aId)
             if not user:
                 adminIds.remove(aId)
-                m = u'The user ID %s is specified as having the'\
-                  u'local role GroupAdmin in the group %s (%s) '\
-                  u'on the site %s (%s), but no user with that '\
-                  u'ID exists.' % (aId, self.name, self.id,
+                m = 'The user ID %s is specified as having the'\
+                  'local role GroupAdmin in the group %s (%s) '\
+                  'on the site %s (%s), but no user with that '\
+                  'ID exists.' % (aId, self.name, self.id,
                     self.siteInfo.name, self.siteInfo.id)
-                m.encode('ascii', 'ignore')
-                log.warn(m)
+                log.warn(to_ascii(m))
 
         admins = [createObject('groupserver.UserFromId',
                       self.context, a) for a in adminIds]
@@ -255,10 +265,9 @@ class GSGroupInfo(object):
 
 def groupInfo_to_anchor(groupInfo):
     assert groupInfo
-    assert isinstance(groupInfo, GSGroupInfo), \
-        '%s is not a GroupInfo' % groupInfo
-    retval = u'<a href="%s" class="group">%s</a>' % \
+    if not isinstance(groupInfo, GSGroupInfo):
+        m = '{0} is not a GroupInfo'.format(groupInfo)
+        raise TypeError(m)
+    retval = '<a href="%s" class="group">%s</a>' % \
         (groupInfo.url, groupInfo.name)
-    assert retval
-    assert type(retval) == unicode
     return retval
