@@ -17,7 +17,7 @@ class GSGroupInfoFactory(object):
     implements(IFactory)
 
     title = 'GroupServer Group Info Factory'
-    descripton = 'Create a new GroupServer group information instance'
+    description = 'Create a new GroupServer group information instance'
 
     def __call__(self, context, groupId=None):
         retval = GSGroupInfo(context, groupId)
@@ -191,7 +191,6 @@ class GSGroupInfo(object):
                 retval = 'odd'
         if retval:
             assert (retval in groupTypes) or (retval == 'odd')
-        assert type(retval) == str
         return retval
 
     @property
