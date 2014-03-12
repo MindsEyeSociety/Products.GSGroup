@@ -146,7 +146,8 @@ class GSGroupInfo(object):
     def get_description(self):
         desc = ''
         if self.group_exists():
-            desc = self.groupObj.getProperty('description', '')
+            d = self.groupObj.getProperty('description', None)
+            desc = d if d else ''
         retval = to_ascii(desc)
         return retval
 
