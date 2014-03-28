@@ -33,20 +33,22 @@ class GSGroupInfoFactory(object):
     #########################################
 
     def __get_group_object_by_id(self, context, groupId):
+        if not context:
+            raise ValueError('No context')
         if not isinstance(groupId, basestring):
             m = 'groupID ("{0}") is not a string'.format(groupId)
             raise TypeError(m)
+        if not groupId:
+            raise ValueError('No group identifier')
 
         groupsInfo = IGSGroupsInfo(context)
         # Converting to ASCII to work around the following issue:
         #   TypeError: getattr(): attribute name must be string
         gid = to_ascii(groupId)
-
         if not hasattr(groupsInfo.groupsObj, gid):
             m = '{0} ("{1}") does not exist in {2}'
             msg = m.format(gid, groupId, context)
             raise ValueError(msg)
-
         retval = getattr(groupsInfo.groupsObj, gid)
         assert retval
         return retval
@@ -76,11 +78,11 @@ class GSGroupInfo(object):
     def __get_group_object_by_id(self, groupId):
         retval = None
         site_root = self.context.site_root()
-        content = getattr(site_root, 'Content')
-        site = getattr(content, self.siteInfo.id)
-        groups = getattr(site, 'groups')
-        if hasattr(groups, groupId):
-            retval = getattr(groups, groupId)
+        content = getattr(site_root, to_ascii('Content'))
+        site = getattr(content, to_ascii(self.siteInfo.id))
+        groups = getattr(site, to_ascii('groups'))
+        if hasattr(groups, to_ascii(groupId)):
+            retval = getattr(groups, to_ascii(groupId))
         return retval
 
     def __get_group_object_by_acquisition(self):
@@ -96,28 +98,30 @@ class GSGroupInfo(object):
           group is found.
         """
         retval = None
-
+        isGroup = to_ascii('is_group')
         group_object = self.context
-        if getattr(group_object.aq_inner.aq_explicit, 'is_group', False):
+        if getattr(group_object.aq_inner.aq_explicit, isGroup, False):
             retval = group_object
         else:
             while group_object:
                 try:
                     group_object = group_object.aq_parent
                     g = group_object.aq_inner.aq_explicit
-                    if getattr(g, 'is_group', False):
+                    if getattr(g, isGroup, False):
                         break
                 except:
                     break
         try:
-            if getattr(group_object.aq_inner.aq_explicit, 'is_group', False):
+            if getattr(group_object.aq_inner.aq_explicit, isGroup, False):
                 retval = group_object
         except:
             pass
         return retval
 
     def group_exists(self):
-        return (self.groupObj is not None)
+        retval = (self.groupObj is not None)
+        assert type(retval) == bool
+        return retval
 
     @Lazy
     def id(self):
@@ -212,7 +216,7 @@ class GSGroupInfo(object):
         return self.get_group_admins()
 
     def get_group_admins(self):
-        aclUsers = getattr(self.groupObj, 'acl_users')
+        aclUsers = getattr(self.groupObj, to_ascii('acl_users'))
         adminIds = self.groupObj.users_with_local_role('GroupAdmin')
         for aId in adminIds:
             user = aclUsers.getUser(aId)
