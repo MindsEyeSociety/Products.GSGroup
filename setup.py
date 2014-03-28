@@ -1,4 +1,17 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+# Copyright © 2009–2014 OnlineGroups.net and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 import os
 from setuptools import setup, find_packages
 from version import get_version
@@ -10,7 +23,6 @@ setup(name='Products.GSGroup',
       description="",
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Programming Language :: Python",
         ],
@@ -18,7 +30,7 @@ setup(name='Products.GSGroup',
       author='Michael JasonSmith',
       author_email='mpj17@onlinegroups.net',
       url='http://groupserver.org',
-      license='ZPL',
+      license='ZPL 2.1',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['Products'],
       include_package_data=True,
@@ -31,11 +43,12 @@ setup(name='Products.GSGroup',
           'zope.app.folder',
           'zope.component',
           'zope.interface',
-          'zope.schema',          
+          'zope.schema',
           'gs.cache',
+          'gs.core',
           'gs.database',
           'Products.CustomUserFolder',
-          'Products.GSGroupMember', # Eh?
+          'Products.GSGroupMember',  # Eh?
           'Products.XWFCore',
           # -*- Extra requirements: -*-
       ],
