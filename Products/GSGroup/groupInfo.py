@@ -72,6 +72,8 @@ class GSGroupInfo(object):
     adapts(IFolder)
 
     def __init__(self, context, groupId=None):
+        if not context:
+            raise ValueError('No context provided: {0}'.format(context))
         self.context = context
         self.groupId = groupId
 
