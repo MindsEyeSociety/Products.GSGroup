@@ -12,24 +12,29 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+import codecs
 import os
 from setuptools import setup, find_packages
 from version import get_version
 
 version = get_version()
 
+with codecs.open('README.txt', encoding='utf-8') as f:
+    long_description = f.read()
+with codecs.open(os.path.join("docs", "HISTORY.txt"), encoding='utf-8') as f:
+    long_description += '\n' + f.read()
+
 setup(name='Products.GSGroup',
       version=version,
       description="",
-      long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+      long_description=long_description,
       classifiers=[
         "Programming Language :: Python",
         ],
       keywords='',
       author='Michael JasonSmith',
       author_email='mpj17@onlinegroups.net',
-      url='http://groupserver.org',
+      url='http://source.iopen.net/groupserver/Products.GSGroup/',
       license='ZPL 2.1',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['Products'],
@@ -47,6 +52,7 @@ setup(name='Products.GSGroup',
           'gs.cache',
           'gs.core',
           'gs.database',
+          'gs.groups',
           'Products.CustomUserFolder',
           'Products.GSGroupMember',  # Eh?
           'Products.XWFCore',
