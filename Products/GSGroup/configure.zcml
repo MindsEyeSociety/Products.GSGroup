@@ -1,61 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <configure xmlns="http://namespaces.zope.org/zope"
-  xmlns:browser="http://namespaces.zope.org/browser"
-  xmlns:rdb="http://namespaces.zope.org/rdb"
-  xmlns:sqlos="http://namespaces.sqlobject.org/sqlos">
+           i18n_domain="groupserver">
 
   <class class="OFS.Folder.Folder">
       <implements interface="zope.app.folder.interfaces.IFolder" />
   </class>
-  
-  <interface 
+
+  <interface
     interface=".interfaces.IGSJoiningInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSLeavingInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSSiteAdministrationInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSGroupAdmistrationInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSModerationInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSModeratedInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSModeratorInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSGroupViewingInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSMembersViewingInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSMessageViewingInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSChatViewingInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSMessagePostingInfo" />
 
-  <interface 
+  <interface
     interface=".interfaces.IGSChatPostingInfo" />
 
   <include files="*-group.zcml" />
-  
+
   <interface interface=".interfaces.IGSGroupBasicPrivacySettings" />
 
   <!-- Factories -->
   <utility factory=".groupInfo.GSGroupInfoFactory"
     name="groupserver.GroupInfo"
     permission="zope.Public"/>
-    
+
   <adapter provides=".interfaces.IGSGroupInfo"
                 for="zope.app.folder.interfaces.IFolder"
                 permission="zope2.Public"
@@ -65,11 +63,10 @@
   <utility factory=".mailinglistinfo.GSMailingListInfoFactory"
     name="groupserver.MailingListInfo"
     permission="zope.Public"/>
-    
+
   <adapter provides=".interfaces.IGSMailingListInfo"
                 for="zope.app.folder.interfaces.IFolder"
                 permission="zope2.Public"
                 factory=".mailinglistinfo.GSMailingListInfo"
                 />
 </configure>
-
