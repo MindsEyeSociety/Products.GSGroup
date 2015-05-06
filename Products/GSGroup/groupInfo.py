@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-##############################################################################
+############################################################################
 #
-# Copyright © 2009–2014 OnlineGroups.net and Contributors.
+# Copyright © 2009, 2010, 2011, 2012, 2013, 2014, 2015
+# OnlineGroups.net and Contributors.
+#
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -11,8 +13,8 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 #
-##############################################################################
-from __future__ import absolute_import, unicode_literals
+############################################################################
+from __future__ import absolute_import, unicode_literals, print_function
 from logging import getLogger
 log = getLogger('Products.GSGroup.groupinfo')
 from zope.app.folder.interfaces import IFolder
@@ -20,7 +22,7 @@ from zope.cachedescriptors.property import Lazy
 from zope.component.interfaces import IFactory
 from zope.component import adapts, createObject
 from zope.interface import implements, implementedBy
-from gs.core import to_ascii
+from gs.core import to_ascii, to_unicode_or_bust
 from gs.groups.interfaces import IGSGroupsInfo
 from .interfaces import IGSGroupInfo
 from .joining import GSGroupJoining
@@ -93,9 +95,9 @@ class GSGroupInfo(object):
     def __get_group_object_by_id(self, groupId):
         retval = None
         site_root = self.context.site_root()
-        content = getattr(site_root, to_ascii('Content'))
+        content = getattr(site_root, b'Content')
         site = getattr(content, to_ascii(self.siteInfo.id))
-        groups = getattr(site, to_ascii('groups'))
+        groups = getattr(site, b'groups')
         if hasattr(groups, to_ascii(groupId)):
             retval = getattr(groups, to_ascii(groupId))
         return retval
@@ -113,21 +115,20 @@ class GSGroupInfo(object):
           group is found.
         """
         retval = None
-        isGroup = to_ascii('is_group')
         group_object = self.context
-        if getattr(group_object.aq_inner.aq_explicit, isGroup, False):
+        if getattr(group_object.aq_inner.aq_explicit, b'is_group', False):
             retval = group_object
         else:
             while group_object:
                 try:
                     group_object = group_object.aq_parent
                     g = group_object.aq_inner.aq_explicit
-                    if getattr(g, isGroup, False):
+                    if getattr(g, b'is_group', False):
                         break
                 except:
                     break
         try:
-            if getattr(group_object.aq_inner.aq_explicit, isGroup, False):
+            if getattr(group_object.aq_inner.aq_explicit, b'is_group', False):
                 retval = group_object
         except:
             pass
@@ -150,7 +151,9 @@ class GSGroupInfo(object):
 
     @Lazy
     def name(self):
-        return self.get_name()
+        r = self.get_name()
+        retval = to_unicode_or_bust(r)
+        return retval
 
     def get_name(self):
         retval = ''
@@ -231,21 +234,21 @@ class GSGroupInfo(object):
         return self.get_group_admins()
 
     def get_group_admins(self):
-        aclUsers = getattr(self.groupObj, to_ascii('acl_users'))
-        adminIds = self.groupObj.users_with_local_role('GroupAdmin')
+        aclUsers = getattr(self.groupObj, b'acl_users')
+        adminIds = self.groupObj.users_with_local_role(b'GroupAdmin')
         for aId in adminIds:
             user = aclUsers.getUser(aId)
             if not user:
                 adminIds.remove(aId)
                 m = 'The user ID %s is specified as having the'\
-                  'local role GroupAdmin in the group %s (%s) '\
-                  'on the site %s (%s), but no user with that '\
-                  'ID exists.' % (aId, self.name, self.id,
-                    self.siteInfo.name, self.siteInfo.id)
+                    'local role GroupAdmin in the group %s (%s) '\
+                    'on the site %s (%s), but no user with that '\
+                    'ID exists.' % (aId, self.name, self.id,
+                                    self.siteInfo.name, self.siteInfo.id)
                 log.warn(to_ascii(m))
 
         admins = [createObject('groupserver.UserFromId',
-                      self.context, a) for a in adminIds]
+                               self.context, a) for a in adminIds]
         retval = [a for a in admins if not a.anonymous]
         return retval
 
@@ -254,7 +257,7 @@ class GSGroupInfo(object):
         # FIXME: OMG WTF DELETE ME
         # importing here to workaround a weird import order problem
         from Products.GSParticipationStats.groupstatscontentprovider import \
-             GroupPostingStats
+            GroupPostingStats
 
         try:
             groupStats = None
@@ -274,7 +277,7 @@ class GSGroupInfo(object):
 
     def get_property(self, prop, default=None):
         assert self.groupObj, 'Group instance does not exist\n'\
-          'Context %s\nID %s' % (self.context, self.groupId)
+            'Context %s\nID %s' % (self.context, self.groupId)
         return self.groupObj.getProperty(prop, default)
 
     @property
