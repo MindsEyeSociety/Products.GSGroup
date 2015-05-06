@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-##############################################################################
+############################################################################
 #
-# Copyright © 2009–2014 OnlineGroups.net and Contributors.
+# Copyright © 2009, 2010, 2011, 2012, 2013, 2014 OnlineGroups.net and Contributors.
+#
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -11,7 +12,7 @@
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
 # FOR A PARTICULAR PURPOSE.
 #
-##############################################################################
+############################################################################
 from __future__ import absolute_import, unicode_literals
 from logging import getLogger
 log = getLogger('Products.GSGroup.groupinfo')
@@ -20,7 +21,7 @@ from zope.cachedescriptors.property import Lazy
 from zope.component.interfaces import IFactory
 from zope.component import adapts, createObject
 from zope.interface import implements, implementedBy
-from gs.core import to_ascii
+from gs.core import to_ascii, to_unicode_or_bust
 from gs.groups.interfaces import IGSGroupsInfo
 from .interfaces import IGSGroupInfo
 from .joining import GSGroupJoining
@@ -150,7 +151,9 @@ class GSGroupInfo(object):
 
     @Lazy
     def name(self):
-        return self.get_name()
+        r = self.get_name()
+        retval = to_unicode_or_bust(r)
+        return retval
 
     def get_name(self):
         retval = ''
