@@ -47,7 +47,7 @@
 
   <include files="*-group.zcml" />
 
-  <interface interface=".interfaces.IGSGroupBasicPrivacySettings" />
+  <interface interface=".interfacesprivacy.IGSGroupBasicPrivacySettings" />
 
   <!-- Factories -->
   <utility factory=".groupInfo.GSGroupInfoFactory"
