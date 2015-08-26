@@ -2,7 +2,7 @@
 version = '2.2.1'
 release = False
 
-#--------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------#
 import sys
 if (sys.version_info < (3, )):
     from commands import getstatusoutput
@@ -28,7 +28,8 @@ def execute_command(commandstring):
 
 def parse_version_from_package():
     try:
-        pkginfo = os.path.join(glob.glob('*.egg-info')[0], 'PKG-INFO')
+        pkginfo = os.path.join(glob.glob('*.egg-info')[0],
+                                         'PKG-INFO')
     except:
         pkginfo = ''
 
@@ -52,8 +53,7 @@ def get_version():
         commitdate = execute_command(c)
         # convert date to UTC unix timestamp, using the date command because
         # python date libraries do not stabilise till about 2.6
-        dateCommand = 'date -d"%s" --utc +%%s' % commitdate
-        timestamp = int(execute_command(dateCommand))
+        timestamp = int(execute_command('date -d"%s" --utc +%%s' % commitdate))
 
         # finally we have something we can use!
         dt = datetime.datetime.utcfromtimestamp(timestamp)
@@ -61,11 +61,11 @@ def get_version():
         if release:
             version_string = version
         else:
-            version_string = "%s.dev%s-%s" % (version, datestring, globalid)
+            version_string = "%s.dev%s" % (version, datestring)
 
     except (CommandError, ValueError, TypeError):
-        # --=mpj17=-- Usually because we are building out a source-egg,
-        # rather than from a Hg source-directory.
+        # --=mpj17=-- Usually because we are building out a source-egg, rather
+        # than from a Hg source-directory.
         version_string = parse_version_from_package()
 
     return version_string
