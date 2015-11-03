@@ -47,26 +47,26 @@
 
   <include files="*-group.zcml" />
 
-  <interface interface=".interfacesprivacy.IGSGroupBasicPrivacySettings" />
-
   <!-- Factories -->
-  <utility factory=".groupInfo.GSGroupInfoFactory"
+  <utility
     name="groupserver.GroupInfo"
-    permission="zope.Public"/>
+    factory=".groupInfo.GSGroupInfoFactory"
+    permission="zope.Public" />
 
-  <adapter provides=".interfaces.IGSGroupInfo"
-                for="zope.app.folder.interfaces.IFolder"
-                permission="zope2.Public"
-                factory=".groupInfo.GSGroupInfo"
-                />
+  <adapter
+    provides=".interfaces.IGSGroupInfo"
+    for="zope.app.folder.interfaces.IFolder"
+    factory=".groupInfo.GSGroupInfo"
+    permission="zope2.Public" />
 
-  <utility factory=".mailinglistinfo.GSMailingListInfoFactory"
+  <utility
     name="groupserver.MailingListInfo"
+    factory=".mailinglistinfo.GSMailingListInfoFactory"
     permission="zope.Public"/>
 
-  <adapter provides=".interfaces.IGSMailingListInfo"
-                for="zope.app.folder.interfaces.IFolder"
-                permission="zope2.Public"
-                factory=".mailinglistinfo.GSMailingListInfo"
-                />
+  <adapter
+    provides=".interfaces.IGSMailingListInfo"
+    for="zope.app.folder.interfaces.IFolder"
+    factory=".mailinglistinfo.GSMailingListInfo"
+    permission="zope2.Public" />
 </configure>
