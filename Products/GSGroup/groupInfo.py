@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 #
-# Copyright © 2009, 2010, 2011, 2012, 2013, 2014, 2015
+# Copyright © 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016
 # OnlineGroups.net and Contributors.
 #
 # All Rights Reserved.
@@ -20,20 +20,18 @@ log = getLogger('Products.GSGroup.groupinfo')
 from zope.app.folder.interfaces import IFolder
 from zope.cachedescriptors.property import Lazy
 from zope.component.interfaces import IFactory
-from zope.component import adapts, createObject
-from zope.interface import implements, implementedBy
+from zope.component import adapter, createObject
+from zope.interface import implementer, implementedBy
 from gs.core import to_ascii, to_unicode_or_bust
 from gs.groups.interfaces import IGSGroupsInfo
 from .interfaces import IGSGroupInfo
 from .joining import GSGroupJoining
 
 
+@implementer(IFactory)
 class GSGroupInfoFactory(object):
-    implements(IFactory)
-
     title = 'GroupServer Group Info Factory'
     description = 'Create a new GroupServer group information instance'
-
     def __call__(self, context, groupId=None):
         retval = GSGroupInfo(context, groupId)
         return retval
@@ -69,10 +67,9 @@ class GSGroupInfoFactory(object):
         return retval
 
 
+@implementer(IGSGroupInfo)
+@adapter(IFolder)
 class GSGroupInfo(object):
-    implements(IGSGroupInfo)
-    adapts(IFolder)
-
     def __init__(self, context, groupId=None):
         if not context:
             raise ValueError('No context provided: {0}'.format(context))
@@ -286,10 +283,12 @@ class GSGroupInfo(object):
 
 
 def groupInfo_to_anchor(groupInfo):
-    assert groupInfo
-    if not isinstance(groupInfo, GSGroupInfo):
-        m = '{0} is not a GroupInfo'.format(groupInfo)
-        raise TypeError(m)
-    retval = '<a href="%s" class="group">%s</a>' % \
-        (groupInfo.url, groupInfo.name)
+    if not groupInfo:
+        raise ValueError('groupInfo required')
+    if groupInfo.group_exists():
+        retval = '<a href="{gi.url}" class="group">{gi.url}</a>'.format(gi=groupInfo)
+    else:
+        retval = to_unicode_or_bust(groupInfo.groupId)
+        if not retval:
+            retval = '{Unknown group}'
     return retval
