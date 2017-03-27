@@ -99,13 +99,6 @@ class GSMailingListInfo(object):
         """ Find and return all moderated members as a list of userInfo objects.
         The userIds of specified moderated members are assumed to be stored in a 
         property called 'moderated_members' of type 'lines'.
-          If this property does not exist or does not contain any userIds, then
-        there are two possibilities: either no members are moderated, or all
-        group members (other than administrators, moderators and the ptn coach)
-        are moderated. 
-          The deciding factor is whether 'Moderate New Members' is on: 
-           - If so, then it is assumed that *no members* are being moderated. 
-           - If not, then it is assumed that *all normal members* are moderated.
         """
         members = []
         if self.is_moderated:
@@ -116,12 +109,13 @@ class GSMailingListInfo(object):
                 members = \
                   [ createObject('groupserver.UserFromId', self.context, uid) 
                     for uid in moderated_ids if uid in memberIds ]
-            elif not(self.is_moderate_new):
-                members = \
-                  [ u for u in group_members 
-                    if (not(user_admin_of_group(u, self.groupInfo)) 
-                    and not(user_participation_coach_of_group(u, self.groupInfo) 
-                    and (u not in self.moderators) and (u not in self.blocked_members))) ]
+            #We do not want to moderate all members
+            #elif not(self.is_moderate_new):
+            #    members = \
+            #      [ u for u in group_members 
+            #        if (not(user_admin_of_group(u, self.groupInfo)) 
+            #        and not(user_participation_coach_of_group(u, self.groupInfo) 
+            #        and (u not in self.moderators) and (u not in self.blocked_members))) ]
             members.sort(sort_by_name)
         assert type(members) == list
         return members
